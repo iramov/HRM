@@ -2,6 +2,7 @@
 {
     public enum DeliveryUnit
     {
+        Unknown,
         Finance,
         Healthcare,
         Entertainment
