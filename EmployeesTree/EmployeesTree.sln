@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeTree.Models", "EmployeeTree.Models\EmployeeTree.Models.csproj", "{8E474C0F-1C5E-403B-B73C-AC2442D0F6F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeTree.Data", "EmployeeTree.Data\EmployeeTree.Data.csproj", "{E175033F-B35F-47D8-9B1C-69614FFAE394}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeTree.Web", "EmployeeTree.Web\EmployeeTree.Web.csproj", "{E367359D-9A2B-452F-B3E1-19C39F3D3577}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E474C0F-1C5E-403B-B73C-AC2442D0F6F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E474C0F-1C5E-403B-B73C-AC2442D0F6F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E474C0F-1C5E-403B-B73C-AC2442D0F6F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E474C0F-1C5E-403B-B73C-AC2442D0F6F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E175033F-B35F-47D8-9B1C-69614FFAE394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E175033F-B35F-47D8-9B1C-69614FFAE394}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E175033F-B35F-47D8-9B1C-69614FFAE394}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E175033F-B35F-47D8-9B1C-69614FFAE394}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E367359D-9A2B-452F-B3E1-19C39F3D3577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E367359D-9A2B-452F-B3E1-19C39F3D3577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E367359D-9A2B-452F-B3E1-19C39F3D3577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E367359D-9A2B-452F-B3E1-19C39F3D3577}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
