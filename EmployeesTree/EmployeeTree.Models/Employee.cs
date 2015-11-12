@@ -39,12 +39,12 @@
         [ForeignKey("Manager")]
         public int? ManagerId { get; set; }
 
-        public Employee Manager { get; set; }
+        public virtual Employee Manager { get; set; }
 
-        //[ForeignKey("Team")]
-        //public int TeamId { get; set; }
+        [ForeignKey("Team")]
+        public int? TeamId { get; set; }
 
-        //public virtual Team Team { get; set; }
+        public virtual Team Team { get; set; }
         
     }
 }

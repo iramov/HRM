@@ -27,7 +27,7 @@ namespace EmployeeTree.Models
         [ForeignKey("Leader")]
         public int LeaderId { get; set; }
 
-        public Employee Leader { get; set; }
+        public virtual Employee Leader { get; set; }
 
         public virtual ICollection<Employee> Members { get; set; }
 

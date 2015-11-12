@@ -28,14 +28,16 @@
             base.SaveChanges();
         }
 
-        //Old code for previous logic
-        //protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        //{
 
-        //    //modelBuilder.Entity<Employee>()
-        //    //        .HasOptional(e => e.Manager)
-        //    //        .WithMany()
-        //    //        .HasForeignKey(m => m.ManagerId);
-        //}
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+
+
+            modelBuilder.Entity<Team>()
+                    .HasRequired(e => e.Leader)
+                    .WithMany()
+                    .HasForeignKey(l => l.LeaderId)
+                    .WillCascadeOnDelete(false);
+        }
     }
 }

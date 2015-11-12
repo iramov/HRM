@@ -16,27 +16,27 @@
         public ActionResult Index()
         {
             //Hardcoding some data so the base is initialized
-            Employee employee = new Employee();
-            employee.FirstName = "Smilen";
-            employee.LastName = "Petrov";
-            employee.Position = Position.Senior;
+            //Employee employee = new Employee();
+            //employee.FirstName = "Smilen";
+            //employee.LastName = "Petrov";
+            //employee.Position = Position.Senior;
 
-            Employee employee3 = new Employee();
-            employee3.FirstName = "Kamen";
-            employee3.LastName = "Peolk";
-            employee3.Position = Position.Junior;
+            //Employee employee3 = new Employee();
+            //employee3.FirstName = "Kamen";
+            //employee3.LastName = "Peolk";
+            //employee3.Position = Position.Junior;
 
-            Employee employee2 = new Employee();
-            employee2.FirstName = "Pesho";
-            employee2.LastName = "Georgiev";
-            employee2.Position = Position.TeamLeader;
+            //Employee employee2 = new Employee();
+            //employee2.FirstName = "Pesho";
+            //employee2.LastName = "Georgiev";
+            //employee2.Position = Position.TeamLeader;
 
 
-            context.Employees.Add(employee);
-            context.Employees.Add(employee3);
-            context.Employees.Add(employee2);
+            //context.Employees.Add(employee);
+            //context.Employees.Add(employee3);
+            //context.Employees.Add(employee2);
             
-            context.SaveChanges();
+            //context.SaveChanges();
 
             return View();
         }
