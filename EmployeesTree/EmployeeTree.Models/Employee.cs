@@ -48,6 +48,14 @@
 
         public virtual Team Team { get; set; }
 
+        public string FullNameAndEmail 
+        {
+            get
+            {
+                return FirstName + " " + LastName + ", " + Email;
+            }   
+        } 
+
         public override bool Equals(object other)
         {
             var employee = other as Employee;

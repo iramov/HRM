@@ -1,19 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using EmployeeTree.Data;
-using EmployeeTree.Models;
-
-namespace EmployeeTree.Web.Controllers
+﻿namespace EmployeeTree.Web.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Net;
+    using System.Web;
+    using System.Web.Mvc;
+    using EmployeeTree.Data;
+    using EmployeeTree.Models;
+    using EmployeeTree.Web.ViewModel;
+
     public class TeamsController : Controller
     {
         private EmployeeDbContext context = new EmployeeDbContext();
+
+        //public TeamsController(IEmployeeDbContext context)
+        //{
+        //    this.context = context;
+        //}
 
         // GET: Teams
         public ActionResult Index()
@@ -41,7 +47,7 @@ namespace EmployeeTree.Web.Controllers
         public ActionResult Create()
         {
             var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName");
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
             return View();
         }
@@ -124,6 +130,42 @@ namespace EmployeeTree.Web.Controllers
         {
             Team team = context.Teams.Find(id);
             context.Teams.Remove(team);
+            context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        // GET: Teams/Create
+        public ActionResult CreateWithEmployees()
+        {
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName");
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
+            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
+            ViewBag.FreeEmployees = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
+            return View();
+        }
+
+        // POST: Teams/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateWithEmployees(TeamWithEmployeesViewModel team)
+        {
+            //if (ModelState.IsValid)
+            //{
+            //    context.Teams.Add(team);
+            //    context.SaveChanges();
+            //    return RedirectToAction("Index");
+            //}
+            //var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            //ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
+            //ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
+
+            if (!ModelState.IsValid)
+            {
+                return View(team);
+            }
+
+            context.Teams.Add(team.Team);
             context.SaveChanges();
             return RedirectToAction("Index");
         }
