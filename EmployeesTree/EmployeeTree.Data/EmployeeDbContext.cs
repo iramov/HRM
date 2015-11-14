@@ -12,6 +12,11 @@
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<EmployeeDbContext, Configuration>());
         }
 
+        public static EmployeeDbContext Create()
+        {
+            return new EmployeeDbContext();
+        }
+
         public IDbSet<Employee> Employees { get; set; }
 
         public IDbSet<Team> Teams { get; set; }

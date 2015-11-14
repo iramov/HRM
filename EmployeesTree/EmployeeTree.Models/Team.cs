@@ -32,7 +32,7 @@ namespace EmployeeTree.Models
         public virtual ICollection<Employee> Members { get; set; }
 
         [ForeignKey("Project")]
-        public int ProjectId { get; set; }
+        public int? ProjectId { get; set; }
 
         public virtual Project Project { get; set; }
     }

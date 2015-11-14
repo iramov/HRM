@@ -2,6 +2,7 @@
 {
     using EmployeeTree.Models;
     using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
 
     public interface IEmployeeDbContext
     {
@@ -13,5 +14,8 @@
 
         void SaveChanges();
 
+        DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
+
+        void Dispose();
     }
 }

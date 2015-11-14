@@ -13,12 +13,12 @@ namespace EmployeeTree.Web.Controllers
 {
     public class TeamsController : Controller
     {
-        private EmployeeDbContext db = new EmployeeDbContext();
+        private EmployeeDbContext context = new EmployeeDbContext();
 
         // GET: Teams
         public ActionResult Index()
         {
-            var teams = db.Teams.Include(t => t.Leader).Include(t => t.Project);
+            var teams = context.Teams.Include(t => t.Leader).Include(t => t.Project);
             return View(teams.ToList());
         }
 
@@ -29,7 +29,7 @@ namespace EmployeeTree.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Team team = db.Teams.Find(id);
+            Team team = context.Teams.Find(id);
             if (team == null)
             {
                 return HttpNotFound();
@@ -40,8 +40,9 @@ namespace EmployeeTree.Web.Controllers
         // GET: Teams/Create
         public ActionResult Create()
         {
-            ViewBag.LeaderId = new SelectList(db.Employees, "Id", "FirstName");
-            ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name");
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName");
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
             return View();
         }
 
@@ -54,13 +55,13 @@ namespace EmployeeTree.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Teams.Add(team);
-                db.SaveChanges();
+                context.Teams.Add(team);
+                context.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            ViewBag.LeaderId = new SelectList(db.Employees, "Id", "FirstName", team.LeaderId);
-            ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", team.ProjectId);
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
             return View(team);
         }
 
@@ -71,13 +72,14 @@ namespace EmployeeTree.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Team team = db.Teams.Find(id);
+            Team team = context.Teams.Find(id);
             if (team == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.LeaderId = new SelectList(db.Employees, "Id", "FirstName", team.LeaderId);
-            ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", team.ProjectId);
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
             return View(team);
         }
 
@@ -90,12 +92,13 @@ namespace EmployeeTree.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(team).State = EntityState.Modified;
-                db.SaveChanges();
+                context.Entry(team).State = EntityState.Modified;
+                context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.LeaderId = new SelectList(db.Employees, "Id", "FirstName", team.LeaderId);
-            ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", team.ProjectId);
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
             return View(team);
         }
 
@@ -106,7 +109,7 @@ namespace EmployeeTree.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Team team = db.Teams.Find(id);
+            Team team = context.Teams.Find(id);
             if (team == null)
             {
                 return HttpNotFound();
@@ -119,9 +122,9 @@ namespace EmployeeTree.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Team team = db.Teams.Find(id);
-            db.Teams.Remove(team);
-            db.SaveChanges();
+            Team team = context.Teams.Find(id);
+            context.Teams.Remove(team);
+            context.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -129,7 +132,7 @@ namespace EmployeeTree.Web.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                context.Dispose();
             }
             base.Dispose(disposing);
         }

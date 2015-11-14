@@ -30,6 +30,8 @@
 
         public string WorkPlace { get; set; }
 
+        [Required(ErrorMessage = "The email address is required")]
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
 
         public string CellNumber { get; set; }
@@ -45,6 +47,19 @@
         public int? TeamId { get; set; }
 
         public virtual Team Team { get; set; }
+
+        public override bool Equals(object other)
+        {
+            var employee = other as Employee;
+            if (other == null || employee == null)
+            {
+                return false;
+            }
+
+            return this.FirstName.Equals(employee.FirstName) &&
+                    this.LastName.Equals(employee.LastName) &&
+                    this.Email.Equals(employee.Email);
+        }
         
     }
 }
