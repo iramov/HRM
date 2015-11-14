@@ -66,7 +66,7 @@
                 return RedirectToAction("Index");
             }
             var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", team.LeaderId);
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
             return View(team);
         }
@@ -84,7 +84,7 @@
                 return HttpNotFound();
             }
             var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", team.LeaderId);
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
             return View(team);
         }
@@ -103,7 +103,7 @@
                 return RedirectToAction("Index");
             }
             var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", team.LeaderId);
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
             return View(team);
         }
@@ -138,10 +138,11 @@
         public ActionResult CreateWithEmployees()
         {
             var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName");
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
             var freeEmployees = context.Employees.Where(e => e.TeamId == null);
-            ViewBag.FreeEmployees = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
+
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
+            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
             return View();
         }
 
