@@ -48,13 +48,23 @@
 
         public virtual Team Team { get; set; }
 
-        public string FullNameAndEmail 
+        public string FullNameAndEmail
         {
             get
             {
                 return FirstName + " " + LastName + ", " + Email;
-            }   
-        } 
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            if ((FirstName == null) || (LastName == null) || (Email == null))
+            {
+                return base.GetHashCode();
+            }
+            string stringRepresentation = FirstName + LastName + Email;
+            return stringRepresentation.GetHashCode();
+        }
 
         public override bool Equals(object other)
         {
@@ -68,6 +78,6 @@
                     this.LastName.Equals(employee.LastName) &&
                     this.Email.Equals(employee.Email);
         }
-        
+
     }
 }

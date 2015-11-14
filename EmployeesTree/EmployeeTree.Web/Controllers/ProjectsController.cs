@@ -13,12 +13,17 @@ namespace EmployeeTree.Web.Controllers
 {
     public class ProjectsController : Controller
     {
-        private EmployeeDbContext db = new EmployeeDbContext();
+        private IEmployeeDbContext context;
+
+        public ProjectsController(EmployeeDbContext context)
+        {
+            this.context = context;
+        }
 
         // GET: Projects
         public ActionResult Index()
         {
-            return View(db.Projects.ToList());
+            return View(context.Projects.ToList());
         }
 
         // GET: Projects/Details/5
@@ -28,7 +33,7 @@ namespace EmployeeTree.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Project project = db.Projects.Find(id);
+            Project project = context.Projects.Find(id);
             if (project == null)
             {
                 return HttpNotFound();
@@ -51,8 +56,8 @@ namespace EmployeeTree.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Projects.Add(project);
-                db.SaveChanges();
+                context.Projects.Add(project);
+                context.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -66,7 +71,7 @@ namespace EmployeeTree.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Project project = db.Projects.Find(id);
+            Project project = context.Projects.Find(id);
             if (project == null)
             {
                 return HttpNotFound();
@@ -83,8 +88,8 @@ namespace EmployeeTree.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(project).State = EntityState.Modified;
-                db.SaveChanges();
+                context.Entry(project).State = EntityState.Modified;
+                context.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(project);
@@ -97,7 +102,7 @@ namespace EmployeeTree.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Project project = db.Projects.Find(id);
+            Project project = context.Projects.Find(id);
             if (project == null)
             {
                 return HttpNotFound();
@@ -110,9 +115,9 @@ namespace EmployeeTree.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Project project = db.Projects.Find(id);
-            db.Projects.Remove(project);
-            db.SaveChanges();
+            Project project = context.Projects.Find(id);
+            context.Projects.Remove(project);
+            context.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -120,7 +125,7 @@ namespace EmployeeTree.Web.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                context.Dispose();
             }
             base.Dispose(disposing);
         }

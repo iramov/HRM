@@ -13,14 +13,14 @@ namespace EmployeeTree.Web.Controllers
 {
     public class EmployeesController : Controller
     {
-        //private IEmployeeDbContext context;
+        private IEmployeeDbContext context;
 
-        //public EmployeesController(EmployeeDbContext context) 
-        //{
-        //    this.context = context;        
-        //}
+        public EmployeesController(EmployeeDbContext context)
+        {
+            this.context = context;
+        }
 
-        private EmployeeDbContext context = new EmployeeDbContext();
+        //private EmployeeDbContext context = new EmployeeDbContext();
 
         // GET: Employees
         public ActionResult Index()

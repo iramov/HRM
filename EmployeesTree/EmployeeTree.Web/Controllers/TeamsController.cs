@@ -14,12 +14,12 @@
 
     public class TeamsController : Controller
     {
-        private EmployeeDbContext context = new EmployeeDbContext();
+        private IEmployeeDbContext context;
 
-        //public TeamsController(IEmployeeDbContext context)
-        //{
-        //    this.context = context;
-        //}
+        public TeamsController(EmployeeDbContext context)
+        {
+            this.context = context;
+        }
 
         // GET: Teams
         public ActionResult Index()
