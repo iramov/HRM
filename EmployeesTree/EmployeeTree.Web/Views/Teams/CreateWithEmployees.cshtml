@@ -47,17 +47,17 @@
             </div>
         </div>
 
-        <button type="button" class="btn btn-default btn-sm" id="add-member-btn">
-            Add employee
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-        </button>
+        @*<button type="button" class="btn btn-default btn-sm" id="add-member-btn">
+                Add employee
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>*@
         <table class="table" id="tableEmployees">
             <tr id="template-row">
                 @Html.Label("Choose team member: ", new { @class = "control-label col-md-2" })
                 <td class="col-md-10">
-                    @Html.DropDownList("Employees[index].EmployeeId", (SelectList)ViewBag.FreeEmployees, new { @class = "form-control" })
+                    @Html.DropDownList("Employees[index].EmployeeId", (SelectList)ViewBag.FreeEmployees, new { @class = "form-control", id = "employeeDropDown[number]" })
                 </td>
-                <td>
+                <td id="td-delete-employee">
                     <button type="button" class="btn btn-default btn-group-sm removeRow" id="delete-employee-btn">
                         Delete
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
@@ -65,7 +65,10 @@
                 </td>
             </tr>
         </table>
-        
+        <button type="button" class="btn btn-default btn-sm" id="add-member-btn">
+            Add employee
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -76,38 +79,86 @@
 }
 
 <div>
-    @Html.ActionLink("Back to the List", "Index", null, new { @class = "btn btn-default"})
+    @Html.ActionLink("Back to the List", "Index", null, new { @class = "btn btn-default" })
 </div>
 
+<div id="emptyDDL">
+    <select class="form-control employee" id="employeeDropDown" name="Employees[index].EmployeeId"></select>
+</div>
 
-
-@section Scripts 
+@section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-    $(document).ready(function () {
-        $(function () {
+        $(document).ready(function () {
+            $(function () {
 
-            $('#template-row').hide();
-            var index = 0;
-            $('#add-member-btn').on('click', function () {
-                var html = $('#template-row').html();
-                html = html.replace(/index/g, index);
-                $('#tableEmployees').append('<tr>' + html + '</tr>');
-                index++;
+                $('#template-row').hide();
+                $('.employee').hide();
+                var index = 0;
+                var count = 0;
+                var valuesAll = [];
+                var valuesSelected = [];
+                $('#add-member-btn').on('click', function () {
+                    //var values = [];
+
+                    if (count == 0) {
+                        var html = $('#template-row').html();
+                        html = html.replace(/index/g, index);
+                        html = html.replace(/number/g, index);
+                        $('#tableEmployees').append('<tr>' + html + '</tr>');
+                        //valuesSelected.push($('#employeeDropDown').val())
+                        index++;
+                        count++;
+                        //console.log($('#Employees[index].EmployeeId'));
+                    }
+                    else {
+                        //console.log(index);
+                        //var lastDropDown = index - 1;
+                        //var selectedValue = $('#Employees[' + lastDropDown + '].EmployeeId').val();
+                        //console.log($('#add-member-btn').closest('#employeeDropDown'));
+                        //valuesSelected.push(selectedValue);
+                        //console.log($('#Employees[' + lastDropDown + '].EmployeeId'));
+                        var emptyDropDown = $('#emptyDDL').html();
+                        console.log(employeeDropDown);
+                        var btnDelete = $('#td-delete-employee').html();
+                        //$('#employeeDropDown[' + index + '] option').each(function () {
+                        //    valuesAll.push($(this).context);
+                        //    //console.log($(this));
+                        //});
+                        //console.log(valuesAll);
+                        //console.log(html);
+                        emptyDropDown = emptyDropDown.replace(/index/g, index);
+                        $('#tableEmployees').append('<tr>' + '<td class="col-md-10">' + emptyDropDown + '</td><td>' + btnDelete + '</td>' + '</tr>');
+                        index++;
+                    }
+                });
+
+                $("#tableEmployees").on("click", "#delete-employee-btn", function () {
+                    $(this).closest('tr').remove();
+                });
+
+                //var values = [];
+                //$('#my_dropdown option').each(function () {
+                //    values.push($(this).attr('value'));
+                //});
+
             });
-
-            $("#tableEmployees").on("click", "#delete-employee-btn", function () {
-                $(this).closest('tr').remove();
-            });
-
-            //var values = [];
-            //$('#my_dropdown option').each(function () {
-            //    values.push($(this).attr('value'));
-            //});
-
         });
-    });
     </script>
+
+    @*<script type="text/javascript">
+            $(function () {
+                $(document).ajaxStart(function () {
+                    $("#dropdownID").attr("disabled", "disabled");
+                })
+                    .ajaxStop(function () {
+                        $("#dropdownID").removeAttr("disabled");
+
+                    });
+
+            });
+        </script>*@
+
 }
