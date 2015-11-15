@@ -8,8 +8,20 @@ namespace EmployeeTree.Web.ViewModel
 {
     public class TeamWithEmployeesViewModel
     {
-        public Team Team { get; set; }
+        public int Id { get; set; }
 
-        public ICollection<Employee> Employees { get; set; }
+        public string Name { get; set; }
+
+        public DeliveryUnit Delivery { get; set; }
+
+        public int LeaderId { get; set; }
+
+        public virtual Employee Leader { get; set; }
+
+        public virtual IList<Employee> Members { get; set; }
+
+        public int? ProjectId { get; set; }
+
+        public virtual Project Project { get; set; }
     }
 }

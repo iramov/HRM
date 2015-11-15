@@ -146,30 +146,142 @@
             return View();
         }
 
+        //public class EmployeeEqualityComparer : IEqualityComparer<Employee>
+        //{
+        //    public bool Equals(Employee x, Employee y)
+        //    {
+        //        return x.Id == y.Id;
+        //    }
+
+        //    public int GetHashCode(Employee obj)
+        //    {
+        //        return obj.Id.GetHashCode();
+        //    }
+        //}
+
         // POST: Teams/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateWithEmployees(TeamWithEmployeesViewModel team)
+        public ActionResult CreateWithEmployees([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId, Members")] TeamWithEmployeesViewModel model)
         {
-            //if (ModelState.IsValid)
+            if (model.Members == null)
+            {
+                ModelState.AddModelError("Employees", "Please add employees");
+                return View(model);
+            }
+
+            //var disinctEmployees = model.MemberIds.Distinct();
+            //if (disinctEmployees.Count() < model.MemberIds.Count)
             //{
-            //    context.Teams.Add(team);
-            //    context.SaveChanges();
-            //    return RedirectToAction("Index");
+            //    ModelState.AddModelError("Employees", "Each employee may exists only once in a team.");
+            //    return View(model);
             //}
-            //var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            //ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
-            //ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
+
+            //foreach (var member in model.MemberIds)
+            //{
+            //    //var currentMember = context.Employees.Find(member.Id);
+            //    //member = currentMember
+
+            //    var currentMember = context.Employees.Find(member.Id);
+            //    member.FirstName = currentMember.FirstName;
+            //    member.LastName = currentMember.LastName;
+            //    member.Email = currentMember.Email;
+            //}
+
+            
+            var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
+
+            var errors = ModelState.Where(m => m.Key.Contains("Members")).Select(m => m.Key);
+
+            foreach (var error in errors)
+            {
+                ModelState[error].Errors.Clear();
+            }
+
+            modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
 
             if (!ModelState.IsValid)
             {
-                return View(team);
+                var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+                var freeEmployees = context.Employees.Where(e => e.TeamId == null);
+                //ModelState.Remove()
+                ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
+                ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
+                ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
+                return View(model);
             }
 
-            context.Teams.Add(team.Team);
+            var team = new Team();
+            team.Name = model.Name;
+            team.Delivery = model.Delivery;
+            team.LeaderId = model.LeaderId;
+            team.ProjectId = model.ProjectId;
+
+            foreach (var employee in model.Members)
+            {
+                var teamMember = context.Employees.Find(employee.Id);
+                team.Members.Add(teamMember);
+            }
+   
+            context.Teams.Add(team);
+
+            //foreach (var employee in model.Members)
+            //{
+            //    var employeeModified = context.Employees.Find(employee.Id);
+            //    employeeModified.ManagerId = model.LeaderId;
+            //    employeeModified.Delivery = model.Delivery;
+            //    employeeModified.TeamId = model.Id;
+            //}
+
+            
+
+            //context.Teams.Add(model);
             context.SaveChanges();
             return RedirectToAction("Index");
         }
+
+
+
+
+        //TESTING THE CREATE VIEW
+
+        // GET: Teams/Create
+        public ActionResult Create2()
+        {
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
+
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
+            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
+            return View();
+        }
+
+        // POST: Teams/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create2([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId")] Team team)
+        {
+            if (ModelState.IsValid)
+            {
+                context.Teams.Add(team);
+                context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", team.LeaderId);
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
+            return View(team);
+        }
+
+
+
+
+
+
+
 
         protected override void Dispose(bool disposing)
         {

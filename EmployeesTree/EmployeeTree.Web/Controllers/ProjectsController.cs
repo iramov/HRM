@@ -47,21 +47,19 @@ namespace EmployeeTree.Web.Controllers
             return View();
         }
 
-        // POST: Projects/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Delivery")] Project project)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                context.Projects.Add(project);
-                context.SaveChanges();
-                return RedirectToAction("Index");
+                return View(project);
             }
 
-            return View(project);
+            context.Projects.Add(project);
+            context.SaveChanges();
+            return RedirectToAction("Index");
+
         }
 
         // GET: Projects/Edit/5
@@ -88,11 +86,12 @@ namespace EmployeeTree.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                context.Entry(project).State = EntityState.Modified;
-                context.SaveChanges();
-                return RedirectToAction("Index");
+                return View(project);
             }
-            return View(project);
+            context.Entry(project).State = EntityState.Modified;
+            context.SaveChanges();
+            return RedirectToAction("Index");
+
         }
 
         // GET: Projects/Delete/5

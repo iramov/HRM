@@ -1,5 +1,6 @@
 ﻿namespace EmployeeTree.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
@@ -78,6 +79,22 @@
                     this.LastName.Equals(employee.LastName) &&
                     this.Email.Equals(employee.Email);
         }
+
+        //public object Clone()
+        //{
+        //    return new Product
+        //    {
+        //        Id = this.Id,
+        //        Name = this.Name,
+        //        Customer = this.Customer,
+        //        UniqueNumber = this.UniqueNumber,
+        //        Comment = this.Comment,
+        //        Parts = this.Parts,
+        //        Date = this.Date,
+        //        Week = this.Week,
+        //        Part = this.Part
+        //    };
+        //}
 
     }
 }
