@@ -55,7 +55,6 @@ namespace EmployeeTree.Web.Controllers
             {
                 return View(project);
             }
-
             context.Projects.Add(project);
             context.SaveChanges();
             return RedirectToAction("Index");
@@ -84,7 +83,7 @@ namespace EmployeeTree.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Delivery")] Project project)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(project);
             }

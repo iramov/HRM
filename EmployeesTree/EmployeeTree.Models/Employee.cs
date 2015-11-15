@@ -13,13 +13,13 @@
         public int Id { get; set; }
 
         [Required]
-        [MinLength(3)]
-        [MaxLength(15)]
+        [StringLength(20, MinimumLength = 3)]
+        [Display(Name = "First name")]
         public string FirstName { get; set; }
 
         [Required]
-        [MinLength(3)]
-        [MaxLength(15)]
+        [StringLength(20, MinimumLength = 3)]
+        [Display(Name = "Last name")]
         public string LastName { get; set; }
 
         [Required]
@@ -29,12 +29,14 @@
 
         public double Salary { get; set; }
 
+        [Display(Name = "Work place")]
         public string WorkPlace { get; set; }
 
         [Required(ErrorMessage = "The email address is required")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
 
+        [Display(Name = "Cell number")]
         public string CellNumber { get; set; }
 
         public Address Address { get; set; }
@@ -42,11 +44,13 @@
         [ForeignKey("Manager")]
         public int? ManagerId { get; set; }
 
+        [Display(Name = "Manager name")]
         public virtual Employee Manager { get; set; }
 
         [ForeignKey("Team")]
         public int? TeamId { get; set; }
 
+        [Display(Name = "Team assigned")]
         public virtual Team Team { get; set; }
 
         public string FullNameAndEmail

@@ -20,8 +20,6 @@ namespace EmployeeTree.Web.Controllers
             this.context = context;
         }
 
-        //private EmployeeDbContext context = new EmployeeDbContext();
-
         // GET: Employees
         public ActionResult Index()
         {
@@ -56,22 +54,20 @@ namespace EmployeeTree.Web.Controllers
         }
 
         // POST: Employees/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,ManagerId,TeamId")] Employee employee)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                context.Employees.Add(employee);
-                context.SaveChanges();
-                return RedirectToAction("Index");
+                ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
+                ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
+                return View(employee);
             }
+            context.Employees.Add(employee);
+            context.SaveChanges();
+            return RedirectToAction("Index");
 
-            ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-            ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
-            return View(employee);
         }
 
         // GET: Employees/Edit/5
@@ -98,15 +94,16 @@ namespace EmployeeTree.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,ManagerId,TeamId")] Employee employee)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                context.Entry(employee).State = EntityState.Modified;
-                context.SaveChanges();
-                return RedirectToAction("Index");
+
+                ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
+                ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
+                return View(employee);
             }
-            ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-            ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
-            return View(employee);
+            context.Entry(employee).State = EntityState.Modified;
+            context.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: Employees/Delete/5
@@ -133,6 +130,20 @@ namespace EmployeeTree.Web.Controllers
             context.Employees.Remove(employee);
             context.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        private void fillTheViewBags(Employee employee)
+        {
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
+
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
+            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
+
+            ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
+            ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
+
         }
 
         protected override void Dispose(bool disposing)

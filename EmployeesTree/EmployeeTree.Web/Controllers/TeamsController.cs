@@ -46,29 +46,25 @@
         // GET: Teams/Create
         public ActionResult Create()
         {
-            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
+            fillTheViewBags();
             return View();
         }
 
         // POST: Teams/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId")] Team team)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                context.Teams.Add(team);
-                context.SaveChanges();
-                return RedirectToAction("Index");
+                //ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
+                //ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
+                fillTheViewBags();
+                return View(team);
             }
-            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", team.LeaderId);
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
-            return View(team);
+            context.Teams.Add(team);
+            context.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: Teams/Edit/5
@@ -83,29 +79,29 @@
             {
                 return HttpNotFound();
             }
-            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", team.LeaderId);
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
+            //ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
+            //ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
+            fillTheViewBags();
             return View(team);
         }
 
-        // POST: Teams/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId")] Team team)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                context.Entry(team).State = EntityState.Modified;
-                context.SaveChanges();
-                return RedirectToAction("Index");
+                //ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
+                //ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
+                fillTheViewBags();
+                return View(team);
+
             }
-            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", team.LeaderId);
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
-            return View(team);
+            context.Entry(team).State = EntityState.Modified;
+            context.SaveChanges();
+            return RedirectToAction("Index");
+
         }
 
         // GET: Teams/Delete/5
@@ -129,6 +125,10 @@
         public ActionResult DeleteConfirmed(int id)
         {
             Team team = context.Teams.Find(id);
+            foreach (var member in team.Members)
+            {
+                member.TeamId = null;
+            }
             context.Teams.Remove(team);
             context.SaveChanges();
             return RedirectToAction("Index");
@@ -137,27 +137,22 @@
         // GET: Teams/Create
         public ActionResult CreateWithEmployees()
         {
-            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
-
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
-            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
+            fillTheViewBags();
             return View();
         }
 
-        //public class EmployeeEqualityComparer : IEqualityComparer<Employee>
-        //{
-        //    public bool Equals(Employee x, Employee y)
-        //    {
-        //        return x.Id == y.Id;
-        //    }
+        public class EmployeeEqualityComparer : IEqualityComparer<Employee>
+        {
+            public bool Equals(Employee x, Employee y)
+            {
+                return x.Id == y.Id;
+            }
 
-        //    public int GetHashCode(Employee obj)
-        //    {
-        //        return obj.Id.GetHashCode();
-        //    }
-        //}
+            public int GetHashCode(Employee obj)
+            {
+                return obj.Id.GetHashCode();
+            }
+        }
 
         // POST: Teams/Create
         [HttpPost]
@@ -188,7 +183,7 @@
             //    member.Email = currentMember.Email;
             //}
 
-            
+
             var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
 
             var errors = ModelState.Where(m => m.Key.Contains("Members")).Select(m => m.Key);
@@ -202,12 +197,7 @@
 
             if (!ModelState.IsValid)
             {
-                var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-                var freeEmployees = context.Employees.Where(e => e.TeamId == null);
-                //ModelState.Remove()
-                ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
-                ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
-                ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
+                fillTheViewBags();
                 return View(model);
             }
 
@@ -222,7 +212,7 @@
                 var teamMember = context.Employees.Find(employee.Id);
                 team.Members.Add(teamMember);
             }
-   
+
             context.Teams.Add(team);
 
             //foreach (var employee in model.Members)
@@ -233,20 +223,14 @@
             //    employeeModified.TeamId = model.Id;
             //}
 
-            
+
 
             //context.Teams.Add(model);
             context.SaveChanges();
             return RedirectToAction("Index");
         }
 
-
-
-
-        //TESTING THE CREATE VIEW
-
-        // GET: Teams/Create
-        public ActionResult Create2()
+        private void fillTheViewBags()
         {
             var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
             var freeEmployees = context.Employees.Where(e => e.TeamId == null);
@@ -254,34 +238,7 @@
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
             ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
-            return View();
         }
-
-        // POST: Teams/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create2([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId")] Team team)
-        {
-            if (ModelState.IsValid)
-            {
-                context.Teams.Add(team);
-                context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", team.LeaderId);
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
-            return View(team);
-        }
-
-
-
-
-
-
-
 
         protected override void Dispose(bool disposing)
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -20,15 +21,20 @@ namespace EmployeeTree.Models
 
         public int Id { get; set; }
 
+        [Required]
+        [Display(Name = "Team name")]
         public string Name { get; set; }
 
+        [Required]
         public DeliveryUnit Delivery { get; set; }
 
         [ForeignKey("Leader")]
         public int LeaderId { get; set; }
 
+        [Display(Name = "Leader name")]
         public virtual Employee Leader { get; set; }
 
+        [Display(Name = "Team members")]
         public virtual ICollection<Employee> Members { get; set; }
 
         [ForeignKey("Project")]
