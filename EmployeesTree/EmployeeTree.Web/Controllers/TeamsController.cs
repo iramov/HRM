@@ -81,7 +81,9 @@
             }
             //ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
             //ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
-            fillTheViewBags();
+            //fillTheViewBags();
+            ViewBag.LeaderId = new SelectList(context.Employees, "Id", "FirstName", team.LeaderId);
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
             return View(team);
         }
 
@@ -92,9 +94,9 @@
         {
             if (!ModelState.IsValid)
             {
-                //ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
-                //ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
-                fillTheViewBags();
+                ViewBag.LeaderId = new SelectList(context.Employees, "Id", "FirstName", team.LeaderId);
+                ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
+                //fillTheViewBags();
                 return View(team);
 
             }
@@ -229,6 +231,39 @@
             context.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        
+        public ActionResult EditWithEmployees(int id)
+        {
+            var teamEdit = context.Teams.Find(id);
+            
+            var teamView = new TeamWithEmployeesViewModel();
+            teamView.Name = teamEdit.Name;
+            teamView.Id = teamEdit.Id;
+            teamView.Members = teamEdit.Members.ToList();
+            teamView.LeaderId = teamEdit.LeaderId;
+            teamView.Project = teamEdit.Project;
+            teamView.Delivery = teamEdit.Delivery;
+            //fillTheViewBags();
+            
+            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
+            var viewEmployees = teamView.Members.Concat(freeEmployees);
+
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", teamView.LeaderId);
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
+            ViewBag.FreeEmployees = new SelectList(viewEmployees, "Id", "FullNameAndEmail", teamView.Members.Select(m => m.Id));
+
+            return View(teamView);
+        }
+
+        [HttpPost]
+        public ActionResult EditWithEmployees(TeamWithEmployeesViewModel model)
+        {
+            return View(model);
+        }
+
 
         private void fillTheViewBags()
         {

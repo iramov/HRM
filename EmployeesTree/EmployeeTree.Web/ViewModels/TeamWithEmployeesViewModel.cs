@@ -17,9 +17,10 @@ namespace EmployeeTree.Web.ViewModel
         [Required]
         public DeliveryUnit Delivery { get; set; }
 
+        [Required]
         public int LeaderId { get; set; }
 
-        [Required]
+        
         [Display(Name = "Leader name")]
         public virtual Employee Leader { get; set; }
 
