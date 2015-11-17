@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using EmployeeTree.Data;
 using EmployeeTree.Models;
+using EmployeeTree.Web.ViewModels;
 
 namespace EmployeeTree.Web.Controllers
 {
@@ -116,6 +117,34 @@ namespace EmployeeTree.Web.Controllers
             context.SaveChanges();
             return RedirectToAction("Index");
         }
+
+
+        // GET: Project/Create
+        public ActionResult CreateWithTeams()
+        {
+            ViewBag.Teams = new SelectList(context.Teams, "Id", "Name");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateWithTeams([Bind(Include = "Id,Name,Delivery, Teams")] ProjectViewModel project)
+        {
+            var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
+
+            var errors = ModelState.Where(m => m.Key.Contains("Teams")).Select(m => m.Key);
+
+            if (!ModelState.IsValid)
+            {
+                return View(project);
+            }
+            //context.Projects.Add(project);
+            //context.SaveChanges();
+            return RedirectToAction("Index");
+
+        }
+
+
 
         protected override void Dispose(bool disposing)
         {

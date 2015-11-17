@@ -10,7 +10,7 @@
     using System.Web.Mvc;
     using EmployeeTree.Data;
     using EmployeeTree.Models;
-    using EmployeeTree.Web.ViewModel;
+    using EmployeeTree.Web.ViewModels;
 
     public class TeamController : Controller
     {

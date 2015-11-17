@@ -1,7 +1,95 @@
-﻿
+﻿@model EmployeeTree.Web.ViewModels.ProjectViewModel
+
 @{
     ViewBag.Title = "CreateWithTeams";
 }
 
-<h2>CreateWithTeams</h2>
+<h2>Create</h2>
 
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Project</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Delivery, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.Delivery, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Delivery, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-default btn-sm" id="add-team-btn">
+            Add team
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button>
+        <table class="table" id="tableTeams">
+            <tr id="template-row">
+                @Html.Label("Choose team: ", new { @class = "control-label col-md-2" })
+                <td class="col-md-10">
+                    @Html.DropDownList("Teams[index].Id", (SelectList)ViewBag.Teams, "Select team", new { data_container = "teams", @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Teams, "", new { @class = "text-danger" })
+                </td>
+                <td id="td-delete-team">
+                    <button type="button" class="btn btn-default btn-group-sm removeRow" id="delete-team-btn">
+                        Delete
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </button>
+                </td>
+            </tr>
+        </table>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(function () {
+            $('#template-row').hide();
+            var index = 0;
+            $('#add-team-btn').on('click', function () {
+                var html = $('#template-row').html();
+                html = html.replace(/index/g, index);
+                $('#tableTeams').append('<tr>' + html + '</tr>');
+                index++;
+            });
+
+            $("#tableTeams").on("click", "#delete-team-btn", function () {
+                $(this).closest('tr').remove();
+            });
+        });
+    </script>
+    <script>
+
+        $("#beginForm").on("submit", function () {
+            $("[data-container]").each(function (index, value) {
+                //$(this).prop("name").replaceWith("Members[" + index + "].Id");
+                $(this).attr("name", "Teams[" + index + "].Id");
+
+            });
+        })
+    </script>
+}

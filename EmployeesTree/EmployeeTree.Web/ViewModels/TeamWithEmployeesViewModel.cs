@@ -1,12 +1,9 @@
-﻿using EmployeeTree.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-
-namespace EmployeeTree.Web.ViewModel
+﻿namespace EmployeeTree.Web.ViewModels
 {
+    using EmployeeTree.Models;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+
     public class TeamWithEmployeesViewModel
     {
         public int Id { get; set; }
