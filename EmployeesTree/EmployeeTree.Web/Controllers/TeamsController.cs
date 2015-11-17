@@ -242,7 +242,7 @@
             teamView.Id = teamEdit.Id;
             teamView.Members = teamEdit.Members.ToList();
             teamView.LeaderId = teamEdit.LeaderId;
-            teamView.Project = teamEdit.Project;
+            teamView.ProjectId = teamEdit.ProjectId;
             teamView.Delivery = teamEdit.Delivery;
             //fillTheViewBags();
             
@@ -250,7 +250,7 @@
             var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
             
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", teamView.LeaderId);
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", teamView.ProjectId);
             ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail", teamView.Members.Select(m => m.Id));
 
             return View(teamView);
@@ -298,13 +298,14 @@
             }
 
             // Add the new employees in the Editted team
-            teamEditted.Members = teamModel.Members;
+            //teamEditted.Members = teamModel.Members;
 
             foreach (var member in teamModel.Members)
             {
                 var employeeToAdd = context.Employees.Find(member.Id);
                 employeeToAdd.TeamId = teamModel.Id;
-                employeeToAdd.ManagerId = teamModel.LeaderId;
+                employeeToAdd.ManagerId = teamEditted.LeaderId;
+                employeeToAdd.Delivery = teamEditted.Delivery;
             }
 
             context.SaveChanges();
