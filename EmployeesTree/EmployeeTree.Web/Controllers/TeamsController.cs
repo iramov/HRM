@@ -247,21 +247,68 @@
             //fillTheViewBags();
             
             var freeEmployees = context.Employees.Where(e => e.TeamId == null);
-            var viewEmployees = teamView.Members.Concat(freeEmployees);
-
             var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
             
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", teamView.LeaderId);
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
-            ViewBag.FreeEmployees = new SelectList(viewEmployees, "Id", "FullNameAndEmail", teamView.Members.Select(m => m.Id));
+            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail", teamView.Members.Select(m => m.Id));
 
             return View(teamView);
         }
 
         [HttpPost]
-        public ActionResult EditWithEmployees(TeamWithEmployeesViewModel model)
+        [ValidateAntiForgeryToken]
+        public ActionResult EditWithEmployees([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId, Members")] TeamWithEmployeesViewModel teamModel)
         {
-            return View(model);
+            var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
+
+            var errors = ModelState.Where(m => m.Key.Contains("Members")).Select(m => m.Key);
+
+            foreach (var error in errors)
+            {
+                ModelState[error].Errors.Clear();
+            }
+
+            if (!ModelState.IsValid)
+            {
+
+                var freeEmployees = context.Employees.Where(e => e.TeamId == null);
+                var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+
+                ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", teamModel.LeaderId);
+                ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
+                ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail", teamModel.Members.Select(m => m.Id));
+                return View(teamModel);
+            }
+
+            var teamEditted = context.Teams.Find(teamModel.Id);
+            teamEditted.Name = teamModel.Name;
+            teamEditted.LeaderId = teamModel.LeaderId;
+            teamEditted.ProjectId = teamModel.ProjectId;
+            teamEditted.Delivery = teamModel.Delivery;
+
+            // Remove employees from the current Editted team
+            var employeesToRemove = teamEditted.Members.ToList();
+
+            foreach (var membersToRemove in employeesToRemove)
+            {
+                var employeeDeleteTeam = context.Employees.Find(membersToRemove.Id);
+                employeeDeleteTeam.TeamId = null;
+                employeeDeleteTeam.ManagerId = null;
+            }
+
+            // Add the new employees in the Editted team
+            teamEditted.Members = teamModel.Members;
+
+            foreach (var member in teamModel.Members)
+            {
+                var employeeToAdd = context.Employees.Find(member.Id);
+                employeeToAdd.TeamId = teamModel.Id;
+                employeeToAdd.ManagerId = teamModel.LeaderId;
+            }
+
+            context.SaveChanges();
+            return RedirectToAction("Index");
         }
 
 

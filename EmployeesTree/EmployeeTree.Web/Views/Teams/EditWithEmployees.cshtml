@@ -34,7 +34,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.LeaderId, "LeaderId", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                
+
                 @Html.DropDownList("LeaderId", null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.LeaderId, "", new { @class = "text-danger" })
             </div>
@@ -63,10 +63,11 @@
                     int index = Model.Members.IndexOf(member);
                     <tr>
                         <td>
-                            @*@Model.Members.IndexOf(member)
+                            @Model.Members.IndexOf(member)
                             @Model.Members[Model.Members.IndexOf(member)].FirstName
-                            @Html.DropDownListFor(model => model.Members[index].Id, new SelectList(@ViewBag.FreeEmployees, "Id", "FirstName", Model.Members[index].Id), new { @class = "form-control" })*@
-                            @Html.DisplayFor(m => m.Members[index].FullNameAndEmail);
+                            @Html.DropDownListFor(model => model.Members[index].Id, new SelectList(Model.Members, "Id", "FirstName", Model.Members[index].Id), new { @class = "form-control" })
+                            @*@Html.DisplayFor(m => m.Members[index].FullNameAndEmail)
+                                @Html.HiddenFor(model => model.Members[index].Id)*@
                         </td>
                         <td>
                             <button type="button" class="btn btn-default btn-group-sm" id="delete-employee-btn">
@@ -77,7 +78,7 @@
                     </tr>
                 }
             }
-            
+
         </table>
 
         <div class="form-group">
@@ -130,5 +131,21 @@
                 $(this).closest('tr').remove();
             });
         });
+    </script>
+    <script>
+        window.onbeforeunload = function () {
+            var html = $("#tableEmployees").html();
+            console.log(html);
+        };
+    </script>
+
+    <script>
+        $("#term-2")
+          .nextUntil("dt")
+            .css("background-color", "red");
+        var term3 = document.getElementById("term-3");
+        $("#term-1")
+          .nextUntil(term3, "dd")
+            .css("color", "green");
     </script>
 }
