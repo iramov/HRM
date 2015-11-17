@@ -7,7 +7,7 @@
 <h2>Edit with team members</h2>
 
 
-@using (Html.BeginForm("EditWithEmployees", "Teams", FormMethod.Post, new { id = "beginForm"}))
+@using (Html.BeginForm("EditWithEmployees", "Team", FormMethod.Post, new { id = "beginForm" }))
 {
     @Html.AntiForgeryToken()
 
@@ -43,8 +43,12 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProjectId, "ProjectId", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("ProjectId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("ProjectId", null, htmlAttributes: new { @class = "form-control", data_project = "project" })
                 @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
+             </div>
+            <div class="col-md-10">
+                @Html.Label("Select to remove project", new { @class = "control-label col-md-2" })
+                @Html.CheckBox("cbProjectEdit", false, new { id = "cbProject" })
             </div>
         </div>
 
@@ -63,12 +67,14 @@
                     int index = Model.Members.IndexOf(member);
                     <tr>
                         <td>
-                            <input type="hidden" name="FavouriteMovies.Index" value="indexA" />
-                            @Model.Members.IndexOf(member)
-                            @Model.Members[Model.Members.IndexOf(member)].FirstName
-                            @Html.DropDownListFor(model => model.Members[index].Id, new SelectList(Model.Members, "Id", "FirstName", Model.Members[index].Id), new { data_container = "members", @class = "form-control" })
-                            @*@Html.DisplayFor(m => m.Members[index].FullNameAndEmail)
-                                @Html.HiddenFor(model => model.Members[index].Id)*@
+                            @*@Model.Members.IndexOf(member)
+                                @Model.Members[Model.Members.IndexOf(member)].FirstName
+                                @Html.DropDownListFor(model => model.Members[index].Id, new SelectList(Model.Members, "Id", "FirstName", Model.Members[index].Id), new { data_container = "members", @class = "form-control" })*@
+                            <div class="form-group">
+                                @Html.DisplayFor(m => m.Members[index].FullNameAndEmail)
+                                @Html.HiddenFor(model => model.Members[index].Id, new { data_container = "members" })
+                            </div>
+                            
                         </td>
                         <td>
                             <button type="button" class="btn btn-default btn-group-sm" id="delete-employee-btn">
@@ -92,7 +98,7 @@
 <table>
     <tr id="template-row">
         <td class="col-md-10">
-            @Html.DropDownList("Members[index].Id", (SelectList)ViewBag.FreeEmployees, "Select team member", new { data_container = "members", @class = "form-control"})
+            @Html.DropDownList("Members[index].Id", (SelectList)ViewBag.FreeEmployees, "Select team member", new { data_container = "members", @class = "form-control" })
             @Html.ValidationMessageFor(model => model.Members, "", new { @class = "text-danger" })
         </td>
         <td id="td-delete-employee">
@@ -116,10 +122,8 @@
 
     <script>
         $(function () {
-
-
-
             $('#template-row').hide();
+
             var index = $('table.table tr').length;
             $('#add-member-btn').on('click', function () {
                 var html = $('#template-row').html();
@@ -134,13 +138,16 @@
         });
     </script>
     <script>
-        
-        $("#beginForm").on("submit", function() {
+
+        $("#beginForm").on("submit", function () {
+            if ($("#cbProject").is(":checked")) {
+                $("[data-project]").attr("disabled", "disabled");
+            }
             
             $("[data-container]").each(function (index, value) {
                 //$(this).prop("name").replaceWith("Members[" + index + "].Id");
                 $(this).attr("name", "Members[" + index + "].Id");
-                
+
             });
         })
     </script>

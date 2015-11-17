@@ -11,22 +11,22 @@ using EmployeeTree.Models;
 
 namespace EmployeeTree.Web.Controllers
 {
-    public class ProjectsController : Controller
+    public class ProjectController : Controller
     {
         private IEmployeeDbContext context;
 
-        public ProjectsController(EmployeeDbContext context)
+        public ProjectController(EmployeeDbContext context)
         {
             this.context = context;
         }
 
-        // GET: Projects
+        // GET: Project
         public ActionResult Index()
         {
             return View(context.Projects.ToList());
         }
 
-        // GET: Projects/Details/5
+        // GET: Project/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -41,7 +41,7 @@ namespace EmployeeTree.Web.Controllers
             return View(project);
         }
 
-        // GET: Projects/Create
+        // GET: Project/Create
         public ActionResult Create()
         {
             return View();
@@ -61,7 +61,7 @@ namespace EmployeeTree.Web.Controllers
 
         }
 
-        // GET: Projects/Edit/5
+        // GET: Project/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -76,9 +76,7 @@ namespace EmployeeTree.Web.Controllers
             return View(project);
         }
 
-        // POST: Projects/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Project/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Delivery")] Project project)
@@ -93,7 +91,7 @@ namespace EmployeeTree.Web.Controllers
 
         }
 
-        // GET: Projects/Delete/5
+        // GET: Project/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -108,7 +106,7 @@ namespace EmployeeTree.Web.Controllers
             return View(project);
         }
 
-        // POST: Projects/Delete/5
+        // POST: Project/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

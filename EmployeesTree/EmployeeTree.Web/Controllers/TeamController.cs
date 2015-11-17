@@ -12,23 +12,23 @@
     using EmployeeTree.Models;
     using EmployeeTree.Web.ViewModel;
 
-    public class TeamsController : Controller
+    public class TeamController : Controller
     {
         private IEmployeeDbContext context;
 
-        public TeamsController(EmployeeDbContext context)
+        public TeamController(EmployeeDbContext context)
         {
             this.context = context;
         }
 
-        // GET: Teams
+        // GET: Team
         public ActionResult Index()
         {
             var teams = context.Teams.Include(t => t.Leader).Include(t => t.Project);
             return View(teams.ToList());
         }
 
-        // GET: Teams/Details/5
+        // GET: Team/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -43,14 +43,14 @@
             return View(team);
         }
 
-        // GET: Teams/Create
+        // GET: Team/Create
         public ActionResult Create()
         {
             fillTheViewBags();
             return View();
         }
 
-        // POST: Teams/Create
+        // POST: Team/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId")] Team team)
@@ -67,7 +67,7 @@
             return RedirectToAction("Index");
         }
 
-        // GET: Teams/Edit/5
+        // GET: Team/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -106,7 +106,7 @@
 
         }
 
-        // GET: Teams/Delete/5
+        // GET: Team/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -121,7 +121,7 @@
             return View(team);
         }
 
-        // POST: Teams/Delete/5
+        // POST: Team/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -136,7 +136,7 @@
             return RedirectToAction("Index");
         }
 
-        // GET: Teams/Create
+        // GET: Team/CreateWithEmployees
         public ActionResult CreateWithEmployees()
         {
             fillTheViewBags();
@@ -156,14 +156,14 @@
             }
         }
 
-        // POST: Teams/Create
+        // POST: Team/CreateWithEmployees
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateWithEmployees([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId, Members")] TeamWithEmployeesViewModel model)
         {
             if (model.Members == null)
             {
-                ModelState.AddModelError("Employees", "Please add employees");
+                ModelState.AddModelError("Employee", "Please add employees");
                 return View(model);
             }
 

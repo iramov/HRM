@@ -34,7 +34,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.LeaderId, "LeaderId", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("LeaderId", (SelectList)ViewBag.LeaderId, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("LeaderId", (SelectList)ViewBag.LeaderId, "Select team leader", htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.LeaderId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -42,7 +42,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProjectId, "ProjectId", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("ProjectId", (SelectList)ViewBag.Projects, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("ProjectId", (SelectList)ViewBag.Projects, "Select team project", htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -55,7 +55,7 @@
             <tr id="template-row">
                 @Html.Label("Choose team member: ", new { @class = "control-label col-md-2" })
                 <td class="col-md-10">
-                    @Html.DropDownList("Members[index].Id", (SelectList)ViewBag.FreeEmployees, "Select team member",  new { @class = "form-control" })
+                    @Html.DropDownList("Members[index].Id", (SelectList)ViewBag.FreeEmployees, "Select team member", new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Members, "", new { @class = "text-danger" })
                 </td>
                 <td id="td-delete-employee">
@@ -99,75 +99,14 @@
             });
         });
     </script>
+    <script>
 
-    @*<script type="text/javascript">
-                $(function () {
-                    $(document).ajaxStart(function () {
-                        $("#dropdownID").attr("disabled", "disabled");
-                    })
-                        .ajaxStop(function () {
-                            $("#dropdownID").removeAttr("disabled");
+        $("#beginForm").on("submit", function () {
+            $("[data-container]").each(function (index, value) {
+                //$(this).prop("name").replaceWith("Members[" + index + "].Id");
+                $(this).attr("name", "Members[" + index + "].Id");
 
-                        });
-
-                });
-        </script>*@
-
-    @*<script>
-            $(document).ready(function () {
-                $(function () {
-
-                    $('#template-row').hide();
-                    $('.employee').hide();
-                    var index = 0;
-                    var count = 0;
-                    var valuesAll = [];
-                    var valuesSelected = [];
-                    $('#add-member-btn').on('click', function () {
-                        //var values = [];
-
-                        if (count == 0) {
-                            var html = $('#template-row').html();
-                            html = html.replace(/index/g, index);
-                            html = html.replace(/number/g, index);
-                            $('#tableEmployees').append('<tr>' + html + '</tr>');
-                            //valuesSelected.push($('#employeeDropDown').val())
-                            index++;
-                            count++;
-                            //console.log($('#Employees[index].EmployeeId'));
-                        }
-                        else {
-                            //console.log(index);
-                            //var lastDropDown = index - 1;
-                            //var selectedValue = $('#Employees[' + lastDropDown + '].EmployeeId').val();
-                            //console.log($('#add-member-btn').closest('#employeeDropDown'));
-                            //valuesSelected.push(selectedValue);
-                            //console.log($('#Employees[' + lastDropDown + '].EmployeeId'));
-                            var emptyDropDown = $('#emptyDDL').html();
-                            console.log(employeeDropDown);
-                            var btnDelete = $('#td-delete-employee').html();
-                            //$('#employeeDropDown[' + index + '] option').each(function () {
-                            //    valuesAll.push($(this).context);
-                            //    //console.log($(this));
-                            //});
-                            //console.log(valuesAll);
-                            //console.log(html);
-                            emptyDropDown = emptyDropDown.replace(/index/g, index);
-                            $('#tableEmployees').append('<tr>' + '<td class="col-md-10">' + emptyDropDown + '</td><td>' + btnDelete + '</td>' + '</tr>');
-                            index++;
-                        }
-                    });
-
-                    $("#tableEmployees").on("click", "#delete-employee-btn", function () {
-                        $(this).closest('tr').remove();
-                    });
-
-                    //var values = [];
-                    //$('#my_dropdown option').each(function () {
-                    //    values.push($(this).attr('value'));
-                    //});
-
-                });
             });
-        </script>*@
+        })
+    </script>
 }

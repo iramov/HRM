@@ -11,23 +11,23 @@ using EmployeeTree.Models;
 
 namespace EmployeeTree.Web.Controllers
 {
-    public class EmployeesController : Controller
+    public class EmployeeController : Controller
     {
         private IEmployeeDbContext context;
 
-        public EmployeesController(EmployeeDbContext context)
+        public EmployeeController(EmployeeDbContext context)
         {
             this.context = context;
         }
 
-        // GET: Employees
+        // GET: Employee
         public ActionResult Index()
         {
             var employees = context.Employees.Include(e => e.Manager).Include(e => e.Team);
             return View(employees.ToList());
         }
 
-        // GET: Employees/Details/5
+        // GET: Employee/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -42,7 +42,7 @@ namespace EmployeeTree.Web.Controllers
             return View(employee);
         }
 
-        // GET: Employees/Create
+        // GET: Employee/Create
         public ActionResult Create()
         {
             var managerEmployees = context.Employees.Where(e => e.Position > Position.Senior);
@@ -53,7 +53,7 @@ namespace EmployeeTree.Web.Controllers
             return View();
         }
 
-        // POST: Employees/Create
+        // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,ManagerId,TeamId")] Employee employee)
@@ -70,7 +70,7 @@ namespace EmployeeTree.Web.Controllers
 
         }
 
-        // GET: Employees/Edit/5
+        // GET: Employee/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -87,9 +87,7 @@ namespace EmployeeTree.Web.Controllers
             return View(employee);
         }
 
-        // POST: Employees/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Employee/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,ManagerId,TeamId")] Employee employee)
@@ -106,7 +104,7 @@ namespace EmployeeTree.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Employees/Delete/5
+        // GET: Employee/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -121,7 +119,7 @@ namespace EmployeeTree.Web.Controllers
             return View(employee);
         }
 
-        // POST: Employees/Delete/5
+        // POST: Employee/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
