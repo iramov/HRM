@@ -287,7 +287,7 @@
             teamEditted.ProjectId = teamModel.ProjectId;
             teamEditted.Delivery = teamModel.Delivery;
 
-            // Remove employees from the current Editted team
+            // Remove employees from the currently Editted team
             var employeesToRemove = teamEditted.Members.ToList();
 
             foreach (var membersToRemove in employeesToRemove)

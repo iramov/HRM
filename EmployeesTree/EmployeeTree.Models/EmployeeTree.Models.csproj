@@ -43,12 +43,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Address.cs" />
-    <Compile Include="DeliveryUnit.cs" />
+    <Compile Include="Enums\DeliveryUnit.cs" />
     <Compile Include="Employee.cs" />
-    <Compile Include="Position.cs" />
+    <Compile Include="Enums\Position.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Team.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Validators\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

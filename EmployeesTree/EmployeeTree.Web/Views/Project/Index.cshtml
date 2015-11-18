@@ -7,8 +7,7 @@
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-default"})
-    @Html.ActionLink("Create project with teams", "CreateWithTeams", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Create New Project", "CreateWithTeams", null, new { @class = "btn btn-default"})
 </p>
 <table class="table">
     <tr>
@@ -17,6 +16,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Delivery)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Teams)
         </th>
         <th></th>
     </tr>
@@ -28,6 +30,14 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Delivery)
+        </td>
+        <td>
+            <ul>
+                @foreach (var team in item.Teams)
+                {
+                    <li>@team.Name</li>
+                }
+            </ul>
         </td>
         <td>
             <div class="btn-group" role="group">
