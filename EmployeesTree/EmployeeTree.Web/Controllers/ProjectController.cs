@@ -102,7 +102,6 @@ namespace EmployeeTree.Web.Controllers
             return RedirectToAction("Index");
         }
 
-
         // GET: Project/Create
         public ActionResult CreateWithTeams()
         {
@@ -124,6 +123,14 @@ namespace EmployeeTree.Web.Controllers
             if (projectModel.Delivery == 0)
             {
                 ModelState.AddModelError("Delivery", "Delivery field is required");
+                ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
+                return View(projectModel);
+            }
+
+            var disinctTeams = projectModel.Teams.Distinct();
+            if (disinctTeams.Count() < projectModel.Teams.Count)
+            {
+                ModelState.AddModelError("Teams", "Each team may exists only once in a project.");
                 ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
                 return View(projectModel);
             }
@@ -173,7 +180,9 @@ namespace EmployeeTree.Web.Controllers
             projectToEdit.Name = project.Name;
             projectToEdit.Teams = project.Teams.ToList();
 
-            ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
+            var allTeams = context.Teams.ToList();
+            var subtractTeams = allTeams.Except(projectToEdit.Teams).ToList();
+            ViewBag.Teams = new SelectList(subtractTeams, "Id", "NameAndDelivery");
             return View(projectToEdit);
         }
 

@@ -61,44 +61,26 @@
             }
         }
 
-        //public override int GetHashCode()
-        //{
-        //    if ((FirstName == null) || (LastName == null) || (Email == null))
-        //    {
-        //        return base.GetHashCode();
-        //    }
-        //    string stringRepresentation = FirstName + LastName + Email;
-        //    return stringRepresentation.GetHashCode();
-        //}
 
-        //public override bool Equals(object other)
-        //{
-        //    var employee = other as Employee;
-        //    if (other == null || employee == null)
-        //    {
-        //        return false;
-        //    }
+        public override int GetHashCode()
+        {
+            if ((Id == null))
+            {
+                return base.GetHashCode();
+            }
+            //string stringRepresentation = FirstName + LastName + Email;
+            return Id.GetHashCode();
+        }
 
-        //    return this.FirstName.Equals(employee.FirstName) &&
-        //            this.LastName.Equals(employee.LastName) &&
-        //            this.Email.Equals(employee.Email);
-        //}
+        public override bool Equals(object other)
+        {
+            var employee = other as Employee;
+            if (other == null || employee == null)
+            {
+                return false;
+            }
 
-        //public object Clone()
-        //{
-        //    return new Product
-        //    {
-        //        Id = this.Id,
-        //        Name = this.Name,
-        //        Customer = this.Customer,
-        //        UniqueNumber = this.UniqueNumber,
-        //        Comment = this.Comment,
-        //        Parts = this.Parts,
-        //        Date = this.Date,
-        //        Week = this.Week,
-        //        Part = this.Part
-        //    };
-        //}
-
+            return this.Id.Equals(employee.Id);
+        }
     }
 }

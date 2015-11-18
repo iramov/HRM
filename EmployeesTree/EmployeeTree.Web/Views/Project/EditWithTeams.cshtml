@@ -47,6 +47,7 @@
                     <tr>
                         <td>
                             <div class="form-group">
+                                @Html.Label("Project team: ", new { @class = "control-label col-md-3" })
                                 @Html.DisplayFor(m => m.Teams[index].NameAndDelivery)
                                 @Html.HiddenFor(m => m.Teams[index].Id, new { data_container = "teams" })
                             </div>
@@ -73,8 +74,8 @@
 
 <table>
     <tr id="template-row">
-        @Html.Label("Choose team: ", new { @class = "control-label col-md-2" })
         <td class="col-md-10">
+            @Html.Label("Choose team: ", new { @class = "control-label col-md-2" })
             @Html.DropDownList("Teams[index].Id", (SelectList)ViewBag.Teams, "Select team", new { data_container = "teams", @class = "form-control" })
             @Html.ValidationMessageFor(model => model.Teams, "", new { @class = "text-danger" })
         </td>

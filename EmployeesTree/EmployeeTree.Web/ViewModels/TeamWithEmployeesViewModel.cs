@@ -28,5 +28,6 @@
 
         [Display(Name = "Project assigned name")]
         public virtual Project Project { get; set; }
+
     }
 }

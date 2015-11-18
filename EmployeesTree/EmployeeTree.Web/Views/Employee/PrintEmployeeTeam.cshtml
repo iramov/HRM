@@ -1,0 +1,102 @@
+﻿@model EmployeeTree.Web.ViewModels.PrintTeamViewModel
+@{
+    ViewBag.Title = "Print employee team";
+}
+
+<h2>Print employee team</h2>
+
+@if (Model.TeamLeader != null)
+{
+    <div>
+        <h4>Team</h4>
+        <hr />
+        <dl class="dl-horizontal">
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Delivery)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Delivery)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Project.Name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Project.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.TeamLeader.FullNameAndEmail)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TeamLeader.FullNameAndEmail)
+            </dd>
+
+            @if (Model.TeamLeader.Manager != null)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.ProjectManager.FullNameAndEmail)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ProjectManager.FullNameAndEmail)
+                </dd>
+                if (Model.ProjectManager.Manager != null)
+                {
+                    <dt>
+                        @Html.DisplayNameFor(model => model.DeliveryManager.FullNameAndEmail)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.DeliveryManager.FullNameAndEmail)
+                    </dd>
+                    if (Model.DeliveryManager.Manager != null)
+                    {
+                        <dt>
+                            @Html.DisplayNameFor(model => model.CEO.FullNameAndEmail)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.CEO.FullNameAndEmail)
+                        </dd>
+                    }
+                }
+            }
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Members)
+            </dt>
+
+            <dd>
+                <ul>
+                    @foreach (var member in Model.Members)
+                    {
+                        <li>@member.FullNameAndEmail</li>
+                    }
+                </ul>
+            </dd>
+
+        </dl>
+    </div>
+}
+else
+{
+    <h4>This employee got no team</h4>
+}
+
+
+<div>
+    @Html.ActionLink("Back to the manager view", "Index", null, new { @class = "btn btn-default"})
+</div>

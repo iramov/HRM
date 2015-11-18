@@ -71,6 +71,7 @@
                                 @Model.Members[Model.Members.IndexOf(member)].FirstName
                                 @Html.DropDownListFor(model => model.Members[index].Id, new SelectList(Model.Members, "Id", "FirstName", Model.Members[index].Id), new { data_container = "members", @class = "form-control" })*@
                             <div class="form-group">
+                                @Html.Label("Team member: ", new { @class = "control-label col-md-2" })
                                 @Html.DisplayFor(m => m.Members[index].FullNameAndEmail)
                                 @Html.HiddenFor(model => model.Members[index].Id, new { data_container = "members" })
                             </div>
@@ -98,6 +99,7 @@
 <table>
     <tr id="template-row">
         <td class="col-md-10">
+            @Html.Label("Choose team member: ", new { @class = "control-label col-md-2" })
             @Html.DropDownList("Members[index].Id", (SelectList)ViewBag.FreeEmployees, "Select team member", new { data_container = "members", @class = "form-control" })
             @Html.ValidationMessageFor(model => model.Members, "", new { @class = "text-danger" })
         </td>

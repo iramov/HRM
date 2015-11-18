@@ -161,11 +161,11 @@
         [ValidateAntiForgeryToken]
         public ActionResult CreateWithEmployees([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId, Members")] TeamWithEmployeesViewModel model)
         {
-            if (model.Members == null)
-            {
-                ModelState.AddModelError("Employee", "Please add employees");
-                return View(model);
-            }
+            //if (model.Members == null)
+            //{
+            //    ModelState.AddModelError("Employee", "Please add employees");
+            //    return View(model);
+            //}
 
             //var disinctEmployees = model.MemberIds.Distinct();
             //if (disinctEmployees.Count() < model.MemberIds.Count)

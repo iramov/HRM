@@ -49,5 +49,25 @@ namespace EmployeeTree.Models
                 return Name + ", " + Delivery;
             }
         }
+
+        public override int GetHashCode()
+        {
+            if ((Id == null))
+            {
+                return base.GetHashCode();
+            }
+            return Id.GetHashCode();
+        }
+
+        public override bool Equals(object other)
+        {
+            var team = other as Team;
+            if (other == null || team == null)
+            {
+                return false;
+            }
+
+            return this.Id.Equals(team.Id);
+        }
     }
 }

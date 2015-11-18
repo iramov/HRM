@@ -42,6 +42,19 @@
             @Html.DisplayFor(model => model.Delivery)
         </dd>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.Members)
+        </dt>
+
+        <dd>
+            <ul>
+                @foreach (var member in Model.Members)
+                {
+                    <li>@member.FullNameAndEmail</li>
+                }
+            </ul>
+        </dd>
+
     </dl>
 </div>
 <p>

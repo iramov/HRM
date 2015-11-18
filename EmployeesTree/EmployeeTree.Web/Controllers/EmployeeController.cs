@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using EmployeeTree.Data;
 using EmployeeTree.Models;
+using EmployeeTree.Web.ViewModels;
 
 namespace EmployeeTree.Web.Controllers
 {
@@ -128,6 +129,57 @@ namespace EmployeeTree.Web.Controllers
             context.Employees.Remove(employee);
             context.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult PrintEmployeeTeam(int id)
+        {
+            var teamView = new PrintEmployeeTeamViewModel();
+            var teamMember = context.Employees.Find(id);
+
+            if (context.Teams.Any(e => e.Id == teamMember.TeamId))
+            {
+                var team = context.Teams.Find(teamMember.TeamId);
+
+                teamView.Name = team.Name;
+                teamView.Project = team.Project;
+                teamView.Members = team.Members;
+                teamView.Delivery = team.Delivery;
+
+                var teamLeaderPosition = team.Leader.Position;
+                switch (teamLeaderPosition)
+                {
+                    case Position.TeamLeader:
+                        teamView.TeamLeader = team.Leader;
+                        break;
+                    case Position.ProjectManager:
+                        teamView.TeamLeader = team.Leader;
+                        break;
+                    case Position.DeliveryManager:
+                        teamView.TeamLeader = team.Leader;
+                        break;
+                    case Position.CEO:
+                        teamView.TeamLeader = team.Leader;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (teamView.TeamLeader.Manager != null)
+                {
+                    teamView.ProjectManager = teamView.TeamLeader.Manager;
+                    if (teamView.ProjectManager.Manager != null)
+                    {
+                        teamView.DeliveryManager = teamView.ProjectManager.Manager;
+                        if (teamView.DeliveryManager.Manager != null)
+                        {
+                            teamView.CEO = teamView.DeliveryManager.Manager;
+                        }
+                    }
+                }
+
+            }
+
+            return View(teamView);
         }
 
         private void fillTheViewBags(Employee employee)

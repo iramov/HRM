@@ -53,8 +53,8 @@
         </button>
         <table class="table" id="tableEmployees">
             <tr id="template-row">
-                @Html.Label("Choose team member: ", new { @class = "control-label col-md-2" })
                 <td class="col-md-10">
+                    @Html.Label("Choose team member: ", new { @class = "control-label col-md-2" })
                     @Html.DropDownList("Members[index].Id", (SelectList)ViewBag.FreeEmployees, "Select team member", new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Members, "", new { @class = "text-danger" })
                 </td>
