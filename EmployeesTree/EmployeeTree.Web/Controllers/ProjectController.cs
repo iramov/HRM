@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using EmployeeTree.Data;
-using EmployeeTree.Models;
-using EmployeeTree.Web.ViewModels;
-
-namespace EmployeeTree.Web.Controllers
+﻿namespace EmployeeTree.Web.Controllers
 {
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Net;
+    using System.Web.Mvc;
+    using EmployeeTree.Data;
+    using EmployeeTree.Models;
+    using EmployeeTree.Web.ViewModels;
+
     public class ProjectController : Controller
     {
         private IEmployeeDbContext context;
@@ -40,36 +36,6 @@ namespace EmployeeTree.Web.Controllers
                 return HttpNotFound();
             }
             return View(project);
-        }
-
-        // GET: Project/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Project project = context.Projects.Find(id);
-            if (project == null)
-            {
-                return HttpNotFound();
-            }
-            return View(project);
-        }
-
-        // POST: Project/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Delivery")] Project project)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(project);
-            }
-            context.Entry(project).State = EntityState.Modified;
-            context.SaveChanges();
-            return RedirectToAction("Index");
-
         }
 
         // GET: Project/Delete/5
@@ -228,7 +194,7 @@ namespace EmployeeTree.Web.Controllers
                     var teamToAdd = context.Teams.Find(team.Id);
                     projectEditted.Teams.Add(teamToAdd);
                 }
-                
+
             }
 
             //context.Projects.Add(projectEditted);
