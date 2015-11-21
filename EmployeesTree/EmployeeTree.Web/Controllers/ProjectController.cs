@@ -69,7 +69,7 @@
         }
 
         // GET: Project/Create
-        public ActionResult CreateWithTeams()
+        public ActionResult Create()
         {
             ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
             return View();
@@ -77,28 +77,29 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateWithTeams([Bind(Include = "Id,Name,Delivery, Teams")]Project projectModel)
+        public ActionResult Create([Bind(Include = "Id,Name,Delivery, Teams")]Project projectModel)
         {
-            var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
-            var errors = ModelState.Where(m => m.Key.Contains("Teams")).Select(m => m.Key);
-            foreach (var error in errors)
-            {
-                ModelState[error].Errors.Clear();
-            }
-
+            //Validations
             if (projectModel.Delivery == 0)
             {
                 ModelState.AddModelError("Delivery", "Delivery field is required");
-                ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
-                return View(projectModel);
+                //ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
+                //return View(projectModel);
             }
 
             var disinctTeams = projectModel.Teams.Distinct();
             if (disinctTeams.Count() < projectModel.Teams.Count)
             {
                 ModelState.AddModelError("Teams", "Each team may exists only once in a project.");
-                ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
-                return View(projectModel);
+                //ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
+                //return View(projectModel);
+            }
+
+            var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
+            var errors = ModelState.Where(m => m.Key.Contains("Teams")).Select(m => m.Key);
+            foreach (var error in errors)
+            {
+                ModelState[error].Errors.Clear();
             }
 
             if (!ModelState.IsValid)
@@ -107,6 +108,7 @@
                 return View(projectModel);
             }
 
+            //Creating new project and filling its props
             var projectToSave = new Project();
             projectToSave.Name = projectModel.Name;
             projectToSave.Delivery = projectModel.Delivery;
@@ -128,7 +130,7 @@
 
 
         // GET: Project/Edit/5
-        public ActionResult EditWithTeams(int? id)
+        public ActionResult Edit(int? id)
         {
             if (id == null)
             {
@@ -155,20 +157,28 @@
         // POST: Project/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditWithTeams([Bind(Include = "Id,Name,Delivery,Teams")] ProjectWithTeamsViewModel projectModel)
+        public ActionResult Edit([Bind(Include = "Id,Name,Delivery,Teams")] ProjectWithTeamsViewModel projectModel)
         {
-            var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
-            var errors = ModelState.Where(m => m.Key.Contains("Teams")).Select(m => m.Key);
-            foreach (var error in errors)
-            {
-                ModelState[error].Errors.Clear();
-            }
-
+            //Validations
             if (projectModel.Delivery == 0)
             {
                 ModelState.AddModelError("Delivery", "Delivery field is required");
                 ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
                 return View(projectModel);
+            }
+            var disinctTeams = projectModel.Teams.Distinct();
+            if (disinctTeams.Count() < projectModel.Teams.Count)
+            {
+                ModelState.AddModelError("Teams", "Each team may exists only once in a project.");
+                //ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
+                //return View(projectModel);
+            }
+
+            var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
+            var errors = ModelState.Where(m => m.Key.Contains("Teams")).Select(m => m.Key);
+            foreach (var error in errors)
+            {
+                ModelState[error].Errors.Clear();
             }
 
             if (!ModelState.IsValid)
@@ -177,6 +187,7 @@
                 return View(projectModel);
             }
 
+            //Getting the edittedProject from the Db and setting its props
             var projectEditted = context.Projects.Find(projectModel.Id);
             projectEditted.Name = projectModel.Name;
             projectEditted.Delivery = projectModel.Delivery;
@@ -185,8 +196,7 @@
             {
                 team.ProjectId = null;
             }
-            //projectEditted.Teams.Clear();
-
+            
             if (projectModel.Teams != null)
             {
                 foreach (var team in projectModel.Teams)

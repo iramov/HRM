@@ -290,7 +290,7 @@
     <Content Include="Views\Team\Edit.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
     <Content Include="Views\Project\Create.cshtml" />
-    <Content Include="Views\Project\EditWithTeams.cshtml" />
+    <Content Include="Views\Project\Edit.cshtml" />
     <Content Include="Views\Employee\PrintEmployeeTeam.cshtml" />
   </ItemGroup>
   <ItemGroup>
