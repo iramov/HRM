@@ -31,7 +31,7 @@ namespace EmployeeTree.Models
         [ForeignKey("Leader")]
         public int LeaderId { get; set; }
 
-        [Display(Name = "Leader name")]
+        [Display(Name = "Leader")]
         public virtual Employee Leader { get; set; }
 
         [Display(Name = "Team members")]

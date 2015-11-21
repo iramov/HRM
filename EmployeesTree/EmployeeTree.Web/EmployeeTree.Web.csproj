@@ -280,13 +280,12 @@
     <Content Include="Views\Employee\Index.cshtml" />
     <Content Include="Views\Team\Delete.cshtml" />
     <Content Include="Views\Team\Details.cshtml" />
-    <Content Include="Views\Team\Edit.cshtml" />
     <Content Include="Views\Team\Index.cshtml" />
     <Content Include="Views\Project\Delete.cshtml" />
     <Content Include="Views\Project\Details.cshtml" />
     <Content Include="Views\Project\Edit.cshtml" />
     <Content Include="Views\Project\Index.cshtml" />
-    <Content Include="Views\Team\CreateWithEmployees.cshtml" />
+    <Content Include="Views\Team\Create.cshtml" />
     <Content Include="Views\Team\EditWithEmployees.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
     <Content Include="Views\Project\CreateWithTeams.cshtml" />

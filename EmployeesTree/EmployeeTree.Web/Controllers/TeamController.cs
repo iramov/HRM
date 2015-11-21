@@ -43,69 +43,6 @@
             return View(team);
         }
 
-        // GET: Team/Create
-        public ActionResult Create()
-        {
-            fillTheViewBags();
-            return View();
-        }
-
-        // POST: Team/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId")] Team team)
-        {
-            if (!ModelState.IsValid)
-            {
-                //ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
-                //ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
-                fillTheViewBags();
-                return View(team);
-            }
-            context.Teams.Add(team);
-            context.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-        // GET: Team/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Team team = context.Teams.Find(id);
-            if (team == null)
-            {
-                return HttpNotFound();
-            }
-            //ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FirstName", team.LeaderId);
-            //ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
-            //fillTheViewBags();
-            ViewBag.LeaderId = new SelectList(context.Employees, "Id", "FirstName", team.LeaderId);
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
-            return View(team);
-        }
-
-        // POST: Edit
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId")] Team team)
-        {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.LeaderId = new SelectList(context.Employees, "Id", "FirstName", team.LeaderId);
-                ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", team.ProjectId);
-                //fillTheViewBags();
-                return View(team);
-
-            }
-            context.Entry(team).State = EntityState.Modified;
-            context.SaveChanges();
-            return RedirectToAction("Index");
-
-        }
-
         // GET: Team/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -159,7 +96,7 @@
         // POST: Team/CreateWithEmployees
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateWithEmployees([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId, Members")] TeamWithEmployeesViewModel model)
+        public ActionResult Create([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId, Members")] TeamWithEmployeesViewModel teamModel)
         {
             //if (model.Members == null)
             //{
@@ -167,7 +104,7 @@
             //    return View(model);
             //}
 
-            //var disinctEmployees = model.MemberIds.Distinct();
+            //var disinctEmployees = model.Members.Distinct();
             //if (disinctEmployees.Count() < model.MemberIds.Count)
             //{
             //    ModelState.AddModelError("Employees", "Each employee may exists only once in a team.");
@@ -200,18 +137,20 @@
             if (!ModelState.IsValid)
             {
                 fillTheViewBags();
-                return View(model);
+                return View(teamModel);
             }
 
             var team = new Team();
-            team.Name = model.Name;
-            team.Delivery = model.Delivery;
-            team.LeaderId = model.LeaderId;
-            team.ProjectId = model.ProjectId;
+            team.Name = teamModel.Name;
+            team.Delivery = teamModel.Delivery;
+            team.LeaderId = teamModel.LeaderId;
+            team.ProjectId = teamModel.ProjectId;
 
-            foreach (var employee in model.Members)
+            foreach (var employee in teamModel.Members)
             {
                 var teamMember = context.Employees.Find(employee.Id);
+                teamMember.ManagerId = team.LeaderId;
+                teamMember.Delivery = team.Delivery;
                 team.Members.Add(teamMember);
             }
 
