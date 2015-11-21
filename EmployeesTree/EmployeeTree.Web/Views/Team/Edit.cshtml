@@ -1,13 +1,13 @@
 ﻿@model EmployeeTree.Web.ViewModels.TeamWithEmployeesViewModel
 
 @{
-    ViewBag.Title = "EditWithEmployees";
+    ViewBag.Title = "Edit";
 }
 
-<h2>Edit with team members</h2>
+<h2>Edit team</h2>
 
 
-@using (Html.BeginForm("EditWithEmployees", "Team", FormMethod.Post, new { id = "beginForm" }))
+@using (Html.BeginForm("Edit", "Team", FormMethod.Post, new { id = "beginForm" }))
 {
     @Html.AntiForgeryToken()
 
@@ -59,13 +59,13 @@
                 @Html.CheckBox("cbProjectEdit", false, new { id = "cbProject" })
             </div>
         </div>
-
+        @Html.Label("Team members ", new { @class = "control-label col-md-2" })
         <button type="button" class="btn btn-default btn-sm" id="add-member-btn">
-            Add employee
+            Add new member
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         </button>
         <table class="table" id="tableEmployees">
-            @Html.Label("Choose team member: ", new { @class = "control-label col-md-2" })
+           
 
 
             @if (Model.Members != null)
@@ -99,7 +99,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Edit" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
     </div>
@@ -130,36 +130,6 @@
 {
     @Scripts.Render("~/bundles/jqueryval")
 
-    <script>
-        $(function () {
-            $('#template-row').hide();
-
-            var index = $('table.table tr').length;
-            $('#add-member-btn').on('click', function () {
-                var html = $('#template-row').html();
-                html = html.replace(/index/g, index);
-                $('#tableEmployees').append('<tr>' + html + '</tr>');
-                index++;
-            });
-
-            $("#tableEmployees").on("click", "#delete-employee-btn", function () {
-                $(this).closest('tr').remove();
-            });
-        });
-    </script>
-    <script>
-
-        $("#beginForm").on("submit", function () {
-            if ($("#cbProject").is(":checked")) {
-                $("[data-project]").attr("disabled", "disabled");
-            }
-            
-            $("[data-container]").each(function (index, value) {
-                //$(this).prop("name").replaceWith("Members[" + index + "].Id");
-                $(this).attr("name", "Members[" + index + "].Id");
-
-            });
-        })
-    </script>
+    <script src="~/Scripts/EditTeamScripts.js"></script>
 
 }

@@ -28,8 +28,9 @@ namespace EmployeeTree.Models
         [Required]
         public DeliveryUnit Delivery { get; set; }
 
+        [Required]
         [ForeignKey("Leader")]
-        public int LeaderId { get; set; }
+        public int? LeaderId { get; set; }
 
         [Display(Name = "Leader")]
         public virtual Employee Leader { get; set; }
@@ -67,7 +68,7 @@ namespace EmployeeTree.Models
                 return false;
             }
 
-            return this.Id.Equals(team.Id);
+            return this.Name.Equals(team.Name);
         }
     }
 }

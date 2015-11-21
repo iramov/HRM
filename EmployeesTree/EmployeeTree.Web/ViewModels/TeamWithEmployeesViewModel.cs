@@ -15,7 +15,7 @@
         public DeliveryUnit Delivery { get; set; }
 
         [Required]
-        public int LeaderId { get; set; }
+        public int? LeaderId { get; set; }
 
         
         [Display(Name = "Leader name")]

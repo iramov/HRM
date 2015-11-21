@@ -73,66 +73,61 @@
             return RedirectToAction("Index");
         }
 
-        // GET: Team/CreateWithEmployees
-        public ActionResult CreateWithEmployees()
+        // GET: Team/Create
+        public ActionResult Create()
         {
             fillTheViewBags();
             return View();
         }
 
-        public class EmployeeEqualityComparer : IEqualityComparer<Employee>
-        {
-            public bool Equals(Employee x, Employee y)
-            {
-                return x.Id == y.Id;
-            }
-
-            public int GetHashCode(Employee obj)
-            {
-                return obj.Id.GetHashCode();
-            }
-        }
-
-        // POST: Team/CreateWithEmployees
+        // POST: Team/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId, Members")] TeamWithEmployeesViewModel teamModel)
         {
-            //if (model.Members == null)
-            //{
-            //    ModelState.AddModelError("Employee", "Please add employees");
-            //    return View(model);
-            //}
+            if (teamModel.Members != null)
+            {
+                var disinctEmployees = teamModel.Members.Distinct();
+                if (disinctEmployees.Count() < teamModel.Members.Count)
+                {
+                    ModelState.AddModelError("", "Each employee may exists only once in a team.");
+                }
+            }
+            if (teamModel.LeaderId != null)
+            {
+                var leader = context.Employees.Find(teamModel.LeaderId);
+                if (teamModel.Members != null)
+                {
+                    foreach (var member in teamModel.Members)
+                    {
+                        if (member.Position > leader.Position)
+                        {
+                            ModelState.AddModelError("", "The leader of the team must be the employee with the highest position.");
+                        }
+                        if (member.Id == teamModel.LeaderId)
+                        {
+                            ModelState.AddModelError("LeaderId", "The leader cannot be duplicated as a member of the team");
+                        }
+                    }
+                }
 
-            //var disinctEmployees = model.Members.Distinct();
-            //if (disinctEmployees.Count() < model.MemberIds.Count)
-            //{
-            //    ModelState.AddModelError("Employees", "Each employee may exists only once in a team.");
-            //    return View(model);
-            //}
+            }
+            else
+            {
+                ModelState.AddModelError("LeaderId", "Leader of the team is required.");
+            }
 
-            //foreach (var member in model.MemberIds)
-            //{
-            //    //var currentMember = context.Employees.Find(member.Id);
-            //    //member = currentMember
-
-            //    var currentMember = context.Employees.Find(member.Id);
-            //    member.FirstName = currentMember.FirstName;
-            //    member.LastName = currentMember.LastName;
-            //    member.Email = currentMember.Email;
-            //}
-
+            if (teamModel.Delivery == 0)
+            {
+                ModelState.AddModelError("Delivery", "Delivery field is required");
+            }
 
             var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
-
             var errors = ModelState.Where(m => m.Key.Contains("Members")).Select(m => m.Key);
-
             foreach (var error in errors)
             {
                 ModelState[error].Errors.Clear();
             }
-
-            modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
 
             if (!ModelState.IsValid)
             {
@@ -140,12 +135,14 @@
                 return View(teamModel);
             }
 
+            //Creating a team and filling up its props
             var team = new Team();
             team.Name = teamModel.Name;
             team.Delivery = teamModel.Delivery;
             team.LeaderId = teamModel.LeaderId;
             team.ProjectId = teamModel.ProjectId;
 
+            //Changing employees Manager and Delivery to be the same as their current team and after that adding them in the team
             foreach (var employee in teamModel.Members)
             {
                 var teamMember = context.Employees.Find(employee.Id);
@@ -155,27 +152,15 @@
             }
 
             context.Teams.Add(team);
-
-            //foreach (var employee in model.Members)
-            //{
-            //    var employeeModified = context.Employees.Find(employee.Id);
-            //    employeeModified.ManagerId = model.LeaderId;
-            //    employeeModified.Delivery = model.Delivery;
-            //    employeeModified.TeamId = model.Id;
-            //}
-
-
-
-            //context.Teams.Add(model);
             context.SaveChanges();
             return RedirectToAction("Index");
         }
 
-        
-        public ActionResult EditWithEmployees(int id)
+
+        public ActionResult Edit(int id)
         {
             var teamEdit = context.Teams.Find(id);
-            
+            //Creating TeamModelView and filling it up
             var teamView = new TeamWithEmployeesViewModel();
             teamView.Name = teamEdit.Name;
             teamView.Id = teamEdit.Id;
@@ -183,26 +168,54 @@
             teamView.LeaderId = teamEdit.LeaderId;
             teamView.ProjectId = teamEdit.ProjectId;
             teamView.Delivery = teamEdit.Delivery;
-            //fillTheViewBags();
-            
-            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
-            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", teamView.LeaderId);
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", teamView.ProjectId);
-            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail", teamView.Members.Select(m => m.Id));
 
+            fillTheViewBagsWithSelected(teamView);
             return View(teamView);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditWithEmployees([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId, Members")] TeamWithEmployeesViewModel teamModel)
+        public ActionResult Edit([Bind(Include = "Id,Name,Delivery,LeaderId,ProjectId, Members")] TeamWithEmployeesViewModel teamModel)
         {
+            if (teamModel.Members != null)
+            {
+                var disinctEmployees = teamModel.Members.Distinct();
+                if (disinctEmployees.Count() < teamModel.Members.Count)
+                {
+                    ModelState.AddModelError("", "Each employee may exists only once in a team.");
+                }
+            }
+            if (teamModel.LeaderId != null)
+            {
+                var leader = context.Employees.Find(teamModel.LeaderId);
+                if (teamModel.Members != null)
+                {
+                    foreach (var member in teamModel.Members)
+                    {
+                        if (member.Position > leader.Position)
+                        {
+                            ModelState.AddModelError("", "The leader of the team must be the employee with the highest position.");
+                        }
+                        if (member.Id == teamModel.LeaderId)
+                        {
+                            ModelState.AddModelError("LeaderId", "The leader cannot be duplicated as a member of the team");
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                ModelState.AddModelError("LeaderId", "Leader of the team is required.");
+            }
+
+            if (teamModel.Delivery == 0)
+            {
+                ModelState.AddModelError("Delivery", "Delivery field is required");
+            }
+
             var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
-
             var errors = ModelState.Where(m => m.Key.Contains("Members")).Select(m => m.Key);
-
             foreach (var error in errors)
             {
                 ModelState[error].Errors.Clear();
@@ -211,15 +224,11 @@
             if (!ModelState.IsValid)
             {
 
-                var freeEmployees = context.Employees.Where(e => e.TeamId == null);
-                var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-
-                ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", teamModel.LeaderId);
-                ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
-                ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail", teamModel.Members.Select(m => m.Id));
+                fillTheViewBagsWithSelected(teamModel);
                 return View(teamModel);
             }
 
+            //taking the current team from the context and updating its fields
             var teamEditted = context.Teams.Find(teamModel.Id);
             teamEditted.Name = teamModel.Name;
             teamEditted.LeaderId = teamModel.LeaderId;
@@ -242,16 +251,19 @@
             foreach (var member in teamModel.Members)
             {
                 var employeeToAdd = context.Employees.Find(member.Id);
-                employeeToAdd.TeamId = teamModel.Id;
                 employeeToAdd.ManagerId = teamEditted.LeaderId;
                 employeeToAdd.Delivery = teamEditted.Delivery;
+                //employeeToAdd.TeamId = teamModel.Id;
+                teamEditted.Members.Add(employeeToAdd);
             }
 
             context.SaveChanges();
             return RedirectToAction("Index");
         }
 
-
+        /// <summary>
+        /// Fill the ViewBags with Leaders("LeadersId"), Projects("ProjectsId") and Employees("FreeEmployees")
+        /// </summary>
         private void fillTheViewBags()
         {
             var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
@@ -260,6 +272,16 @@
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
             ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
+        }
+
+        private void fillTheViewBagsWithSelected(TeamWithEmployeesViewModel teamView)
+        {
+            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", teamView.LeaderId);
+            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", teamView.ProjectId);
+            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail", teamView.Members.Select(m => m.Id));
         }
 
         protected override void Dispose(bool disposing)

@@ -225,6 +225,8 @@
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\CreateTeamScripts.js" />
+    <Content Include="Scripts\EditTeamScripts.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
@@ -286,7 +288,7 @@
     <Content Include="Views\Project\Edit.cshtml" />
     <Content Include="Views\Project\Index.cshtml" />
     <Content Include="Views\Team\Create.cshtml" />
-    <Content Include="Views\Team\EditWithEmployees.cshtml" />
+    <Content Include="Views\Team\Edit.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
     <Content Include="Views\Project\CreateWithTeams.cshtml" />
     <Content Include="Views\Project\EditWithTeams.cshtml" />
