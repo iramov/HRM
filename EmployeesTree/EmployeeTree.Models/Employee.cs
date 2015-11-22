@@ -47,11 +47,17 @@
         [Display(Name = "Manager name")]
         public virtual Employee Manager { get; set; }
 
-        [ForeignKey("Team")]
-        public int? TeamId { get; set; }
+        [ForeignKey("AsTeamLeader")]
+        public int? AsTeamLeaderId { get; set; }
 
-        [Display(Name = "Team assigned")]
-        public virtual Team Team { get; set; }
+        [Display(Name = "As team leader assigned")]
+        public virtual Team AsTeamLeader { get; set; }
+
+        [ForeignKey("AsTeamMember")]
+        public int? AsTeamMemberId { get; set; }
+
+        [Display(Name = "As team member assigned")]
+        public virtual Team AsTeamMember { get; set; }
 
         public string FullNameAndEmail
         {

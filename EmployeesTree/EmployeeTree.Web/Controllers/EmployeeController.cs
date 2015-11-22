@@ -23,7 +23,7 @@
         public ActionResult Index(bool isAscending = false, string orderByColumn = null)
         {
             ViewBag.IsAscending = isAscending;
-            var employees = context.Employees.Include(e => e.Manager).Include(e => e.Team);
+            var employees = context.Employees.Include(e => e.Manager).Include(e => e.AsTeamLeader).Include(e => e.AsTeamMember);
             //employees = employees.ToList();
             var employeesList = new List<Employee>(employees);
             var orderFunc = GetOrderFunction(orderByColumn);
@@ -54,8 +54,11 @@
                 case "Manager":
                     orderFunc = employee => employee.ManagerId;
                     break;
-                case "Team":
-                    orderFunc = employee => employee.TeamId;
+                case "AsTeamLeader":
+                    orderFunc = employee => employee.AsTeamLeaderId;
+                    break;
+                case "AsTeamMember":
+                    orderFunc = employee => employee.AsTeamMemberId;
                     break;
                 default:
                     orderFunc = employee => employee.Id;
@@ -99,7 +102,8 @@
             if (!ModelState.IsValid)
             {
                 ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-                ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
+                ViewBag.AsTeamMemberId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamMemberId);
+                ViewBag.AsTeamLeaderId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamLeaderId);
                 return View(employee);
             }
             context.Employees.Add(employee);
@@ -121,7 +125,8 @@
                 return HttpNotFound();
             }
             ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-            ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
+            ViewBag.AsTeamMemberId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamMemberId);
+            ViewBag.AsTeamLeaderId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamLeaderId);
             return View(employee);
         }
 
@@ -134,7 +139,7 @@
             {
 
                 ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-                ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
+                //ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
                 return View(employee);
             }
             context.Entry(employee).State = EntityState.Modified;
@@ -163,23 +168,21 @@
         public ActionResult DeleteConfirmed(int id)
         {
             var employee = context.Employees.Find(id);
-            if (employee.TeamId != null)
+            if (employee.AsTeamLeaderId != null)
             {
-                var employeeTeam = context.Teams.Find(employee.TeamId);
+                var employeeTeam = context.Teams.Find(employee.AsTeamLeaderId);
                 //If the current employees is team leader the team must be deleted and all its members.TeamId must be nullified
-                if (employee.Id == employeeTeam.LeaderId)
+                foreach (var member in employeeTeam.Members)
                 {
-                    foreach (var member in employeeTeam.Members)
-                    {
-                        member.TeamId = null;
-                    }
-                    context.Teams.Remove(employeeTeam);
+                    member.AsTeamMemberId = null;
+                    member.ManagerId = null;
                 }
-                //else only the current employee must be removed from the team
-                else
-                {
-                    employeeTeam.Members.Remove(employee);
-                }
+                context.Teams.Remove(employeeTeam);
+            }
+            if (employee.AsTeamMemberId != null)
+            {
+                var employeeTeam = context.Teams.Find(employee.AsTeamLeaderId);
+                employeeTeam.Members.Remove(employee);
             }
             context.Employees.Remove(employee);
             context.SaveChanges();
@@ -191,9 +194,9 @@
             var teamView = new EmployeeTeamViewModel();
             var teamMember = context.Employees.Find(id);
 
-            if (context.Teams.Any(e => e.Id == teamMember.TeamId))
+            if (context.Teams.Any(e => e.Id == teamMember.AsTeamMemberId))
             {
-                var team = context.Teams.Find(teamMember.TeamId);
+                var team = context.Teams.Find(teamMember.AsTeamMemberId);
 
                 teamView.Name = team.Name;
                 teamView.Project = team.Project;
@@ -240,7 +243,9 @@
         private void fillTheViewBags(Employee employee)
         {
             ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-            ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
+            ViewBag.AsTeamMemberId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamMemberId);
+            ViewBag.AsTeamLeaderId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamLeaderId);
+            
         }
 
         protected override void Dispose(bool disposing)
