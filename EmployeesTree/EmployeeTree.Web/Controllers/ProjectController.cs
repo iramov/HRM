@@ -77,22 +77,18 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Delivery, Teams")]Project projectModel)
+        public ActionResult Create([Bind(Include = "Id,Name,Delivery, Teams")]ProjectWithTeamsViewModel projectModel)
         {
             //Validations
             if (projectModel.Delivery == 0)
             {
                 ModelState.AddModelError("Delivery", "Delivery field is required");
-                //ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
-                //return View(projectModel);
             }
 
             var disinctTeams = projectModel.Teams.Distinct();
             if (disinctTeams.Count() < projectModel.Teams.Count)
             {
                 ModelState.AddModelError("Teams", "Each team may exists only once in a project.");
-                //ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
-                //return View(projectModel);
             }
 
             var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
@@ -163,15 +159,11 @@
             if (projectModel.Delivery == 0)
             {
                 ModelState.AddModelError("Delivery", "Delivery field is required");
-                ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
-                return View(projectModel);
             }
             var disinctTeams = projectModel.Teams.Distinct();
             if (disinctTeams.Count() < projectModel.Teams.Count)
             {
                 ModelState.AddModelError("Teams", "Each team may exists only once in a project.");
-                //ViewBag.Teams = new SelectList(context.Teams, "Id", "NameAndDelivery");
-                //return View(projectModel);
             }
 
             var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);

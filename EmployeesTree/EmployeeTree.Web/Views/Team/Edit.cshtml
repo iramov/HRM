@@ -7,7 +7,7 @@
 <h2>Edit team</h2>
 
 
-@using (Html.BeginForm("Edit", "Team", FormMethod.Post, new { id = "beginForm" }))
+@using (Html.BeginForm("Edit", "Team", FormMethod.Post, new { id = "beginForm", @class = "editForm" }))
 {
     @Html.AntiForgeryToken()
 
@@ -129,7 +129,7 @@
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
-
-    <script src="~/Scripts/EditTeamScripts.js"></script>
+    <script src="~/Scripts/team.add-remove.employees.js"></script>
+    <script src="~/Scripts/editTeam.onSubmit.js"></script>
 
 }

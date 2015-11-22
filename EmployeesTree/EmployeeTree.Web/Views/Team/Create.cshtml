@@ -7,7 +7,7 @@
 <h2>Create team</h2>
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Create", "Team", FormMethod.Post, new { id = "beginForm", @class = "createForm" }))
 {
     @Html.AntiForgeryToken()
 
@@ -82,6 +82,8 @@
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
+    @*<script src="~/Scripts/createTeam.scripts.js"></script>*@
+    <script src="~/Scripts/team.add-remove.employees.js"></script>
+    <script src="~/Scripts/createTeam.onSubmit.js"></script>
 
-    <script src="~/Scripts/CreateTeamScripts.js"></script>
 }

@@ -95,31 +95,6 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-
-    <script>
-        $(function () {
-            $('#template-row').hide();
-            var index = 0;
-            $('#add-team-btn').on('click', function () {
-                var html = $('#template-row').html();
-                html = html.replace(/index/g, index);
-                $('#tableTeams').append('<tr>' + html + '</tr>');
-                index++;
-            });
-
-            $("#tableTeams").on("click", "#delete-team-btn", function () {
-                $(this).closest('tr').remove();
-            });
-        });
-    </script>
-    <script>
-
-        $("#beginForm").on("submit", function () {
-            $("[data-container]").each(function (index, value) {
-                //$(this).prop("name").replaceWith("Members[" + index + "].Id");
-                $(this).attr("name", "Teams[" + index + "].Id");
-
-            });
-        })
-    </script>
+    <script src="~/Scripts/project.add-remove.teams.js"></script>
+    <script src="~/Scripts/project.onSubmit.js"></script>
 }

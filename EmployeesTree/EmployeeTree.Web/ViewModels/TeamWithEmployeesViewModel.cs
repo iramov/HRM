@@ -29,5 +29,24 @@
         [Display(Name = "Project assigned name")]
         public virtual Project Project { get; set; }
 
+        public override int GetHashCode()
+        {
+            if ((Id == null))
+            {
+                return base.GetHashCode();
+            }
+            return Id.GetHashCode();
+        }
+
+        public override bool Equals(object other)
+        {
+            var team = other as Team;
+            if (other == null || team == null)
+            {
+                return false;
+            }
+
+            return this.Name.Equals(team.Name);
+        }
     }
 }
