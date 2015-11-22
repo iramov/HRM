@@ -201,7 +201,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="ViewModels\PrintEmployeeTeamViewModel.cs" />
+    <Compile Include="ViewModels\EmployeeTeamViewModel.cs" />
     <Compile Include="ViewModels\ProjectWithTeamsViewModel.cs" />
     <Compile Include="ViewModels\TeamWithEmployeesViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -294,7 +294,7 @@
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
     <Content Include="Views\Project\Create.cshtml" />
     <Content Include="Views\Project\Edit.cshtml" />
-    <Content Include="Views\Employee\PrintEmployeeTeam.cshtml" />
+    <Content Include="Views\Employee\EmployeeTeamPreview.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

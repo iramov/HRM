@@ -22,10 +22,50 @@ namespace EmployeeTree.Web.Controllers
         }
 
         // GET: Employee
-        public ActionResult Index()
+        public ActionResult Index(bool isAscending = false, string orderByColumn = null)
         {
+            ViewBag.IsAscending = isAscending;
             var employees = context.Employees.Include(e => e.Manager).Include(e => e.Team);
-            return View(employees.ToList());
+            //employees = employees.ToList();
+            var employeesList = new List<Employee>(employees);
+            var orderFunc = GetOrderFunction(orderByColumn);
+            var employeesSorted = isAscending ? employeesList.OrderBy(orderFunc) : employeesList.OrderByDescending(orderFunc);
+
+            return View(employeesSorted);
+        }
+
+        private Func<Employee, object> GetOrderFunction(string orderByColumn)
+        {
+            Func<Employee, object> orderFunc;
+            switch (orderByColumn)
+            {
+                case "FirstName":
+                    orderFunc = employee => employee.FirstName;
+                    break;
+                case "LastName":
+                    orderFunc = employee => employee.LastName;
+                    break;
+                case "Position":
+                    orderFunc = employee => employee.Position;
+                    break;
+                case "Delivery":
+                    orderFunc = employee => employee.Delivery;
+                    break;
+                case "Email":
+                    orderFunc = employee => employee.Email;
+                    break;
+                case "Manager":
+                    orderFunc = employee => employee.Manager;
+                    break;
+                case "Team":
+                    orderFunc = employee => employee.Team;
+                    break;
+                default:
+                    orderFunc = employee => employee.Position;
+                    break;
+            }
+
+            return orderFunc;
         }
 
         // GET: Employee/Details/5
@@ -131,9 +171,9 @@ namespace EmployeeTree.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult PrintEmployeeTeam(int id)
+        public ActionResult EmployeeTeamPreview(int id)
         {
-            var teamView = new PrintEmployeeTeamViewModel();
+            var teamView = new EmployeeTeamViewModel();
             var teamMember = context.Employees.Find(id);
 
             if (context.Teams.Any(e => e.Id == teamMember.TeamId))
@@ -154,7 +194,7 @@ namespace EmployeeTree.Web.Controllers
                     case Position.ProjectManager:
                         teamView.TeamLeader = team.Leader;
                         break;
-                    case Position.DeliveryManager:
+                    case Position.DeliveryDirector:
                         teamView.TeamLeader = team.Leader;
                         break;
                     case Position.CEO:
@@ -169,10 +209,10 @@ namespace EmployeeTree.Web.Controllers
                     teamView.ProjectManager = teamView.TeamLeader.Manager;
                     if (teamView.ProjectManager.Manager != null)
                     {
-                        teamView.DeliveryManager = teamView.ProjectManager.Manager;
-                        if (teamView.DeliveryManager.Manager != null)
+                        teamView.DeliveryDirector = teamView.ProjectManager.Manager;
+                        if (teamView.DeliveryDirector.Manager != null)
                         {
-                            teamView.CEO = teamView.DeliveryManager.Manager;
+                            teamView.CEO = teamView.DeliveryDirector.Manager;
                         }
                     }
                 }

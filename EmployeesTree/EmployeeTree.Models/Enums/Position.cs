@@ -1,5 +1,7 @@
 ﻿namespace EmployeeTree.Models
 {
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
     using System.Runtime.Serialization;
 
     public  enum Position
@@ -10,14 +12,17 @@
         Intermediate,
         Senior,
 
-        [EnumMember(Value = "Team leader")]
+        //[EnumMember(Value = "Team leader")]
+        [Display(Name = "Team leader")]
         TeamLeader,
 
-        [EnumMember(Value = "Project manager")]
+        //[EnumMember(Value = "Project manager")]
+        [Display(Name = "Project manager")]
         ProjectManager,
 
-        [EnumMember(Value = "Delivery manager")]
-        DeliveryManager,
+        //[EnumMember(Value = "Delivery director")]
+        [Display(Name = "Delivery director")]
+        DeliveryDirector,
 
         CEO
     }

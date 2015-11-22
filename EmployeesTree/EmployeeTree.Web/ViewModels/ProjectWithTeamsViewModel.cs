@@ -9,7 +9,7 @@ namespace EmployeeTree.Web.ViewModels
 {
     public class ProjectWithTeamsViewModel
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         [Display(Name = "Project name")]

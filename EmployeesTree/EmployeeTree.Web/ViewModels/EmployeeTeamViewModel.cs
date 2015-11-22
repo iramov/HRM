@@ -8,7 +8,7 @@ using System.Web;
 
 namespace EmployeeTree.Web.ViewModels
 {
-    public class PrintEmployeeTeamViewModel
+    public class EmployeeTeamViewModel
     {
         [Display(Name = "Team name")]
         public string Name { get; set; }
@@ -23,8 +23,8 @@ namespace EmployeeTree.Web.ViewModels
         [Display(Name = "Project manager")]
         public virtual Employee ProjectManager { get; set; }
 
-        [Display(Name = "Delivery manager")]
-        public virtual Employee DeliveryManager { get; set; }
+        [Display(Name = "Delivery director")]
+        public virtual Employee DeliveryDirector { get; set; }
 
         [Display(Name = "CEO")]
         public virtual Employee CEO { get; set; }

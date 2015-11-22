@@ -1,9 +1,9 @@
-﻿@model EmployeeTree.Web.ViewModels.PrintEmployeeTeamViewModel
+﻿@model EmployeeTree.Web.ViewModels.EmployeeTeamViewModel
 @{
     ViewBag.Title = "Print employee team";
 }
 
-<h2>Print employee team</h2>
+<h2>Show employee team</h2>
 
 @if (Model.TeamLeader != null)
 {
@@ -37,7 +37,7 @@
             </dd>
 
             <dt>
-                @Html.LabelFor(model => model.TeamLeader, "TeamLeader", htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.DisplayNameFor(model => model.TeamLeader)
             </dt>
 
             <dd>
@@ -59,13 +59,13 @@
                 if (Model.ProjectManager.Manager != null)
                 {
                     <dt>
-                        @Html.DisplayNameFor(model => model.DeliveryManager)
+                        @Html.DisplayNameFor(model => model.DeliveryDirector)
                     </dt>
 
                     <dd>
-                        @Html.DisplayFor(model => model.DeliveryManager.FullNameAndEmail)
+                        @Html.DisplayFor(model => model.DeliveryDirector.FullNameAndEmail)
                     </dd>
-                    if (Model.DeliveryManager.Manager != null)
+                    if (Model.DeliveryDirector.Manager != null)
                     {
                         <dt>
                             @Html.DisplayNameFor(model => model.CEO)
