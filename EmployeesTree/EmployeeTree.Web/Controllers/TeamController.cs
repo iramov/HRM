@@ -231,27 +231,55 @@
             teamEditted.ProjectId = teamModel.ProjectId;
             teamEditted.Delivery = teamModel.Delivery;
 
-            // Remove employees from the currently Editted team
-            var employeesToRemove = teamEditted.Members.ToList();
-
-            foreach (var membersToRemove in employeesToRemove)
+            if (teamModel.Members != null)
             {
-                var employeeDeleteTeam = context.Employees.Find(membersToRemove.Id);
-                employeeDeleteTeam.TeamId = null;
-                employeeDeleteTeam.ManagerId = null;
+                //Subtraction the Old from New team so we can get the teams who are removed from the project
+                var subractOldFromNewMembers = teamEditted.Members.Except(teamModel.Members);
+                foreach (var memberToRemove in subractOldFromNewMembers)
+                {
+                    //var employeeDeleteTeam = context.Employees.Find(memberToRemove.Id);
+                    memberToRemove.TeamId = null;
+                    memberToRemove.ManagerId = null;
+                }
+
+                //Subtraction the New from Old team so we can get the teams who are added to the project
+                var subractNewFromOldMemebers = teamModel.Members.Except(teamEditted.Members);
+                foreach (var memberToAdd in subractNewFromOldMemebers)
+                {
+                    var employeeToAdd = context.Employees.Find(memberToAdd.Id);
+                    employeeToAdd.ManagerId = teamEditted.LeaderId;
+                    employeeToAdd.Delivery = teamEditted.Delivery;
+                    //employeeToAdd.TeamId = teamModel.Id;
+                    teamEditted.Members.Add(employeeToAdd);
+                }
             }
 
-            // Add the new employees in the Editted team
-            //teamEditted.Members = teamModel.Members;
 
-            foreach (var member in teamModel.Members)
-            {
-                var employeeToAdd = context.Employees.Find(member.Id);
-                employeeToAdd.ManagerId = teamEditted.LeaderId;
-                employeeToAdd.Delivery = teamEditted.Delivery;
-                //employeeToAdd.TeamId = teamModel.Id;
-                teamEditted.Members.Add(employeeToAdd);
-            }
+            //if (teamModel.Members != null)
+            //{
+            //    // Remove employees from the currently Editted team
+            //    var employeesToRemove = teamEditted.Members.ToList();
+
+            //    foreach (var membersToRemove in employeesToRemove)
+            //    {
+            //        var employeeDeleteTeam = context.Employees.Find(membersToRemove.Id);
+            //        employeeDeleteTeam.TeamId = null;
+            //        employeeDeleteTeam.ManagerId = null;
+            //    }
+
+            //    // Add the new employees in the Editted team
+            //    //teamEditted.Members = teamModel.Members;
+
+            //    foreach (var member in teamModel.Members)
+            //    {
+            //        var employeeToAdd = context.Employees.Find(member.Id);
+            //        employeeToAdd.ManagerId = teamEditted.LeaderId;
+            //        employeeToAdd.Delivery = teamEditted.Delivery;
+            //        //employeeToAdd.TeamId = teamModel.Id;
+            //        teamEditted.Members.Add(employeeToAdd);
+            //    }
+            //}
+            
 
             context.SaveChanges();
             return RedirectToAction("Index");

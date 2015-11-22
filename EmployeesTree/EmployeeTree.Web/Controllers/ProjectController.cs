@@ -184,20 +184,37 @@
             projectEditted.Name = projectModel.Name;
             projectEditted.Delivery = projectModel.Delivery;
 
-            foreach (var team in projectEditted.Teams)
-            {
-                team.ProjectId = null;
-            }
-            
             if (projectModel.Teams != null)
             {
-                foreach (var team in projectModel.Teams)
+                //Subtraction the Old from New team so we can get the teams who are removed from the project
+                var subractOldFromNewTeams = projectEditted.Teams.Except(projectModel.Teams);
+                foreach (var team in subractOldFromNewTeams)
                 {
-                    var teamToAdd = context.Teams.Find(team.Id);
-                    projectEditted.Teams.Add(teamToAdd);
+                    team.ProjectId = null;
                 }
 
+                //Subtraction the New from Old team so we can get the teams who are added to the project
+                var subractNewFromOldTeams = projectModel.Teams.Except(projectEditted.Teams);
+                foreach (var team in subractNewFromOldTeams)
+                {
+                    team.ProjectId = projectEditted.Id;
+                }
             }
+
+
+            //if (projectModel.Teams != null)
+            //{
+            //    foreach (var team in projectEditted.Teams)
+            //    {
+            //        team.ProjectId = null;
+            //    }
+            //    foreach (var team in projectModel.Teams)
+            //    {
+            //        var teamToAdd = context.Teams.Find(team.Id);
+            //        projectEditted.Teams.Add(teamToAdd);
+            //    }
+
+            //}
 
             //context.Projects.Add(projectEditted);
             context.SaveChanges();

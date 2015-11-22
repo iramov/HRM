@@ -45,15 +45,15 @@
             <div class="col-md-10">
                 @if (Model.ProjectId == null)
                 {
-                    @Html.DropDownList("ProjectId", (SelectList)ViewBag.Projects, "Select team project", htmlAttributes: new { @class = "form-control" })
+                    @Html.DropDownList("ProjectId", null, "Select project", htmlAttributes: new { @class = "form-control", data_project = "project" })
                 }
                 else
                 {
-                    @Html.DropDownList("ProjectId", null, htmlAttributes: new { @class = "form-control", data_project = "project" })
+                    @Html.DropDownList("ProjectId", null, "Select to remove project", htmlAttributes: new { @class = "form-control", data_project = "project" })
                 }
-                
+
                 @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
-             </div>
+            </div>
             <div class="col-md-10">
                 @Html.Label("Select to remove project", new { @class = "control-label col-md-2" })
                 @Html.CheckBox("cbProjectEdit", false, new { id = "cbProject" })
@@ -65,7 +65,7 @@
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         </button>
         <table class="table" id="tableEmployees">
-           
+
 
 
             @if (Model.Members != null)
@@ -83,7 +83,7 @@
                                 @Html.DisplayFor(m => m.Members[index].FullNameAndEmail)
                                 @Html.HiddenFor(model => model.Members[index].Id, new { data_container = "members" })
                             </div>
-                            
+
                         </td>
                         <td>
                             <button type="button" class="btn btn-default btn-group-sm" id="delete-employee-btn">

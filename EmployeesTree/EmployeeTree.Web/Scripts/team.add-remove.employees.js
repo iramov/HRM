@@ -2,8 +2,8 @@
 $(function () {
     $('#template-row').hide();
 
-    //Taking the last index in the table of the current employees
-
+    //Taking the last index in the table of the current employees if we are making an edit and
+    //for new record index = 0
     if ($("#beginForm").attr("class") == "createForm") {
         index = 0;
     }
