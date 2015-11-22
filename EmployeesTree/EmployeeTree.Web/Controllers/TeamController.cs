@@ -7,6 +7,8 @@
     using EmployeeTree.Data;
     using EmployeeTree.Models;
     using EmployeeTree.Web.ViewModels;
+    using System;
+    using System.Collections.Generic;
 
     public class TeamController : Controller
     {
@@ -18,10 +20,41 @@
         }
 
         // GET: Team
-        public ActionResult Index()
+        public ActionResult Index(bool isAscending = false, string orderByColumn = null)
         {
             var teams = context.Teams.Include(t => t.Leader).Include(t => t.Project);
-            return View(teams.ToList());
+
+            ViewBag.IsAscending = isAscending;
+            var teamsList = new List<Team>(teams);
+            var orderFunc = GetOrderFunction(orderByColumn);
+            var teamsSorted = isAscending ? teamsList.OrderBy(orderFunc) : teamsList.OrderByDescending(orderFunc);
+            return View(teamsSorted.ToList());
+        }
+
+
+        private Func<Team, object> GetOrderFunction(string orderByColumn)
+        {
+            Func<Team, object> orderFunc;
+            switch (orderByColumn)
+            {
+                case "Name":
+                    orderFunc = team => team.Name;
+                    break;
+                case "Delivery":
+                    orderFunc = team => team.Delivery;
+                    break;
+                case "Leader":
+                    orderFunc = employee => employee.LeaderId;
+                    break;
+                case "Project":
+                    orderFunc = employee => employee.ProjectId;
+                    break;
+                default:
+                    orderFunc = team => team.Id;
+                    break;
+            }
+
+            return orderFunc;
         }
 
         // GET: Team/Details/5
@@ -59,11 +92,16 @@
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Team team = context.Teams.Find(id);
-            foreach (var member in team.Members)
+            var team = context.Teams.Find(id);
+            if (team.Members != null)
             {
-                member.TeamId = null;
+                foreach (var member in team.Members)
+                {
+                    member.TeamId = null;
+                    member.ManagerId = null;
+                }
             }
+
             context.Teams.Remove(team);
             context.SaveChanges();
             return RedirectToAction("Index");
@@ -138,14 +176,21 @@
             team.LeaderId = teamModel.LeaderId;
             team.ProjectId = teamModel.ProjectId;
 
+            var teamLead = context.Employees.Find(teamModel.LeaderId);
+            teamLead.TeamId = teamModel.LeaderId;
+
             //Changing employees Manager and Delivery to be the same as their current team and after that adding them in the team
-            foreach (var employee in teamModel.Members)
+            if (teamModel.Members != null)
             {
-                var teamMember = context.Employees.Find(employee.Id);
-                teamMember.ManagerId = team.LeaderId;
-                teamMember.Delivery = team.Delivery;
-                team.Members.Add(teamMember);
+                foreach (var employee in teamModel.Members)
+                {
+                    var teamMember = context.Employees.Find(employee.Id);
+                    teamMember.ManagerId = team.LeaderId;
+                    teamMember.Delivery = team.Delivery;
+                    team.Members.Add(teamMember);
+                }
             }
+
 
             context.Teams.Add(team);
             context.SaveChanges();
@@ -235,22 +280,28 @@
             {
                 //Subtraction the Old from New team so we can get the teams who are removed from the project
                 var subractOldFromNewMembers = teamEditted.Members.Except(teamModel.Members);
-                foreach (var memberToRemove in subractOldFromNewMembers)
+                if (subractOldFromNewMembers != null)
                 {
-                    //var employeeDeleteTeam = context.Employees.Find(memberToRemove.Id);
-                    memberToRemove.TeamId = null;
-                    memberToRemove.ManagerId = null;
+                    foreach (var memberToRemove in subractOldFromNewMembers)
+                    {
+                        //var employeeDeleteTeam = context.Employees.Find(memberToRemove.Id);
+                        memberToRemove.TeamId = null;
+                        memberToRemove.ManagerId = null;
+                    }
                 }
 
                 //Subtraction the New from Old team so we can get the teams who are added to the project
                 var subractNewFromOldMemebers = teamModel.Members.Except(teamEditted.Members);
-                foreach (var memberToAdd in subractNewFromOldMemebers)
+                if (subractNewFromOldMemebers != null)
                 {
-                    var employeeToAdd = context.Employees.Find(memberToAdd.Id);
-                    employeeToAdd.ManagerId = teamEditted.LeaderId;
-                    employeeToAdd.Delivery = teamEditted.Delivery;
-                    //employeeToAdd.TeamId = teamModel.Id;
-                    teamEditted.Members.Add(employeeToAdd);
+                    foreach (var memberToAdd in subractNewFromOldMemebers)
+                    {
+                        var employeeToAdd = context.Employees.Find(memberToAdd.Id);
+                        employeeToAdd.ManagerId = teamEditted.LeaderId;
+                        employeeToAdd.Delivery = teamEditted.Delivery;
+                        //employeeToAdd.TeamId = teamModel.Id;
+                        teamEditted.Members.Add(employeeToAdd);
+                    }
                 }
             }
 
@@ -279,7 +330,7 @@
             //        teamEditted.Members.Add(employeeToAdd);
             //    }
             //}
-            
+
 
             context.SaveChanges();
             return RedirectToAction("Index");
@@ -290,7 +341,15 @@
         /// </summary>
         private void fillTheViewBags()
         {
-            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
+            var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader).ToList();
+            var teams = context.Teams.ToList();
+            foreach (var team in teams)
+            {
+                if (freeLeaders.Contains(team.Leader))
+                {
+                    freeLeaders.Remove(team.Leader);
+                }
+            }
             var freeEmployees = context.Employees.Where(e => e.TeamId == null);
 
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");

@@ -7,6 +7,7 @@
     using EmployeeTree.Data;
     using EmployeeTree.Models;
     using EmployeeTree.Web.ViewModels;
+    using System;
 
     public class ProjectController : Controller
     {
@@ -18,9 +19,33 @@
         }
 
         // GET: Project
-        public ActionResult Index()
+        public ActionResult Index(bool isAscending = false, string orderByColumn = null)
         {
-            return View(context.Projects.ToList());
+            ViewBag.IsAscending = isAscending;
+            var projects = context.Projects.ToList();
+            var orderFunc = GetOrderFunction(orderByColumn);
+            var projectsSorted = isAscending ? projects.OrderBy(orderFunc) : projects.OrderByDescending(orderFunc);
+            return View(projectsSorted.ToList());
+        }
+
+
+        private Func<Project, object> GetOrderFunction(string orderByColumn)
+        {
+            Func<Project, object> orderFunc;
+            switch (orderByColumn)
+            {
+                case "Name":
+                    orderFunc = project => project.Name;
+                    break;
+                case "Delivery":
+                    orderFunc = project => project.Delivery;
+                    break;
+                default:
+                    orderFunc = project => project.Id;
+                    break;
+            }
+
+            return orderFunc;
         }
 
         // GET: Project/Details/5
@@ -59,10 +84,14 @@
         public ActionResult DeleteConfirmed(int id)
         {
             Project project = context.Projects.Find(id);
-            foreach (var team in project.Teams)
+            if (project.Teams != null)
             {
-                team.ProjectId = null;
+                foreach (var team in project.Teams)
+                {
+                    team.ProjectId = null;
+                }
             }
+
             context.Projects.Remove(project);
             context.SaveChanges();
             return RedirectToAction("Index");
@@ -187,18 +216,29 @@
             if (projectModel.Teams != null)
             {
                 //Subtraction the Old from New team so we can get the teams who are removed from the project
+
                 var subractOldFromNewTeams = projectEditted.Teams.Except(projectModel.Teams);
-                foreach (var team in subractOldFromNewTeams)
+                if (subractOldFromNewTeams.Any())
                 {
-                    team.ProjectId = null;
+                    foreach (var team in subractOldFromNewTeams)
+                    {
+                        var teamRemoveProject = context.Teams.Find(team.Id);
+                        teamRemoveProject.ProjectId = null;
+                    }
                 }
+
 
                 //Subtraction the New from Old team so we can get the teams who are added to the project
                 var subractNewFromOldTeams = projectModel.Teams.Except(projectEditted.Teams);
-                foreach (var team in subractNewFromOldTeams)
+                if (subractNewFromOldTeams.Any())
                 {
-                    team.ProjectId = projectEditted.Id;
+                    foreach (var team in subractNewFromOldTeams)
+                    {
+                        var teamAddProject = context.Teams.Find(team.Id);
+                        teamAddProject.ProjectId = projectModel.Id;
+                    }
                 }
+
             }
 
 

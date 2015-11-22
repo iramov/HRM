@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using EmployeeTree.Data;
-using EmployeeTree.Models;
-using EmployeeTree.Web.ViewModels;
-
-namespace EmployeeTree.Web.Controllers
+﻿namespace EmployeeTree.Web.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Net;
+    using System.Web.Mvc;
+    using EmployeeTree.Data;
+    using EmployeeTree.Models;
+    using EmployeeTree.Web.ViewModels;
+
     public class EmployeeController : Controller
     {
         private IEmployeeDbContext context;
@@ -30,7 +28,6 @@ namespace EmployeeTree.Web.Controllers
             var employeesList = new List<Employee>(employees);
             var orderFunc = GetOrderFunction(orderByColumn);
             var employeesSorted = isAscending ? employeesList.OrderBy(orderFunc) : employeesList.OrderByDescending(orderFunc);
-
             return View(employeesSorted);
         }
 
@@ -55,13 +52,13 @@ namespace EmployeeTree.Web.Controllers
                     orderFunc = employee => employee.Email;
                     break;
                 case "Manager":
-                    orderFunc = employee => employee.Manager;
+                    orderFunc = employee => employee.ManagerId;
                     break;
                 case "Team":
-                    orderFunc = employee => employee.Team;
+                    orderFunc = employee => employee.TeamId;
                     break;
                 default:
-                    orderFunc = employee => employee.Position;
+                    orderFunc = employee => employee.Id;
                     break;
             }
 
@@ -97,7 +94,7 @@ namespace EmployeeTree.Web.Controllers
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,ManagerId,TeamId")] Employee employee)
+        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,Address,ManagerId,TeamId")] Employee employee)
         {
             if (!ModelState.IsValid)
             {
@@ -131,7 +128,7 @@ namespace EmployeeTree.Web.Controllers
         // POST: Employee/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,ManagerId,TeamId")] Employee employee)
+        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,Address,CellNumber,ManagerId,TeamId")] Employee employee)
         {
             if (!ModelState.IsValid)
             {
@@ -165,7 +162,25 @@ namespace EmployeeTree.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Employee employee = context.Employees.Find(id);
+            var employee = context.Employees.Find(id);
+            if (employee.TeamId != null)
+            {
+                var employeeTeam = context.Teams.Find(employee.TeamId);
+                //If the current employees is team leader the team must be deleted and all its members.TeamId must be nullified
+                if (employee.Id == employeeTeam.LeaderId)
+                {
+                    foreach (var member in employeeTeam.Members)
+                    {
+                        member.TeamId = null;
+                    }
+                    context.Teams.Remove(employeeTeam);
+                }
+                //else only the current employee must be removed from the team
+                else
+                {
+                    employeeTeam.Members.Remove(employee);
+                }
+            }
             context.Employees.Remove(employee);
             context.SaveChanges();
             return RedirectToAction("Index");
@@ -224,16 +239,8 @@ namespace EmployeeTree.Web.Controllers
 
         private void fillTheViewBags(Employee employee)
         {
-            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader || (e.Position == Position.TeamLeader && (e.TeamId == null)));
-            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
-
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
-            ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
-            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
-
             ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
             ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
-
         }
 
         protected override void Dispose(bool disposing)

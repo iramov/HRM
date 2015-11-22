@@ -68,7 +68,7 @@ namespace EmployeeTree.Models
                 return false;
             }
 
-            return this.Name.Equals(team.Name);
+            return this.Id.Equals(team.Id);
         }
     }
 }

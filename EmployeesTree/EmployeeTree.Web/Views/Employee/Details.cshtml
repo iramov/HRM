@@ -10,21 +10,6 @@
     <h4>Employee</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Manager.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Manager.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Team.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Team.Name)
-        </dd>
 
         <dt>
             @Html.DisplayNameFor(model => model.FirstName)
@@ -83,6 +68,14 @@
         </dd>
 
         <dt>
+            @Html.DisplayNameFor(model => model.Manager)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Manager.FirstName)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.CellNumber)
         </dt>
 
@@ -90,9 +83,25 @@
             @Html.DisplayFor(model => model.CellNumber)
         </dd>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.Manager)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Manager.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Team)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Team.Name)
+        </dd>
+
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
 </p>
