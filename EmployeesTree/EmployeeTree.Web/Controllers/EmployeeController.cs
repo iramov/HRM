@@ -55,10 +55,10 @@
                     orderFunc = employee => employee.ManagerId;
                     break;
                 case "AsTeamLeader":
-                    orderFunc = employee => employee.AsTeamLeaderId;
+                    orderFunc = employee => employee.AsLeaderTeamId;
                     break;
                 case "AsTeamMember":
-                    orderFunc = employee => employee.AsTeamMemberId;
+                    orderFunc = employee => employee.AsMemberTeamId;
                     break;
                 default:
                     orderFunc = employee => employee.Id;
@@ -89,24 +89,26 @@
             var managerEmployees = context.Employees.Where(e => e.Position > Position.Senior);
             //var freeTeamLeaders = context.Employees.Where(tl => tl.TeamId == null && tl.Position == Position.TeamLeader);
             //managerEmployees.Concat(freeTeamLeaders);
-            ViewBag.ManagerId = new SelectList(managerEmployees, "Id", "FirstName");
-            ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name");
+            //ViewBag.ManagerId = new SelectList(managerEmployees, "Id", "FirstName");
+            //ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name");
+            fillTheViewBags();
             return View();
         }
 
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,Address,ManagerId,TeamId")] Employee employee)
+        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,Address,ManagerId,TeamId")] Employee employeeModel)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-                ViewBag.AsTeamMemberId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamMemberId);
-                ViewBag.AsTeamLeaderId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamLeaderId);
-                return View(employee);
+                //ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
+                //ViewBag.AsTeamMemberId = new SelectList(context.Teams, "Id", "Name", employee.AsMemberTeamId);
+                //ViewBag.AsTeamLeaderId = new SelectList(context.Teams, "Id", "Name", employee.AsLeaderTeamId);
+                fillTheViewBags(employeeModel);
+                return View(employeeModel);
             }
-            context.Employees.Add(employee);
+            context.Employees.Add(employeeModel);
             context.SaveChanges();
             return RedirectToAction("Index");
 
@@ -119,30 +121,32 @@
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Employee employee = context.Employees.Find(id);
-            if (employee == null)
+            var employeeView = context.Employees.Find(id);
+            if (employeeView == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-            ViewBag.AsTeamMemberId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamMemberId);
-            ViewBag.AsTeamLeaderId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamLeaderId);
-            return View(employee);
+            //ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
+            //ViewBag.AsTeamMemberId = new SelectList(context.Teams, "Id", "Name", employee.AsMemberTeamId);
+            //ViewBag.AsTeamLeaderId = new SelectList(context.Teams, "Id", "Name", employee.AsLeaderTeamId);
+            fillTheViewBags(employeeView);
+            return View(employeeView);
         }
 
         // POST: Employee/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,Address,CellNumber,ManagerId,TeamId")] Employee employee)
+        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,Address,CellNumber,ManagerId,TeamId")] Employee employeeModel)
         {
             if (!ModelState.IsValid)
             {
 
-                ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
+                //ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
                 //ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
-                return View(employee);
+                fillTheViewBags(employeeModel);
+                return View(employeeModel);
             }
-            context.Entry(employee).State = EntityState.Modified;
+            context.Entry(employeeModel).State = EntityState.Modified;
             context.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -168,20 +172,20 @@
         public ActionResult DeleteConfirmed(int id)
         {
             var employee = context.Employees.Find(id);
-            if (employee.AsTeamLeaderId != null)
+            if (employee.AsLeaderTeamId != null)
             {
-                var employeeTeam = context.Teams.Find(employee.AsTeamLeaderId);
+                var employeeTeam = context.Teams.Find(employee.AsLeaderTeamId);
                 //If the current employees is team leader the team must be deleted and all its members.TeamId must be nullified
                 foreach (var member in employeeTeam.Members)
                 {
-                    member.AsTeamMemberId = null;
+                    member.AsMemberTeamId = null;
                     member.ManagerId = null;
                 }
                 context.Teams.Remove(employeeTeam);
             }
-            if (employee.AsTeamMemberId != null)
+            if (employee.AsMemberTeamId != null)
             {
-                var employeeTeam = context.Teams.Find(employee.AsTeamLeaderId);
+                var employeeTeam = context.Teams.Find(employee.AsLeaderTeamId);
                 employeeTeam.Members.Remove(employee);
             }
             context.Employees.Remove(employee);
@@ -194,9 +198,9 @@
             var teamView = new EmployeeTeamViewModel();
             var teamMember = context.Employees.Find(id);
 
-            if (context.Teams.Any(e => e.Id == teamMember.AsTeamMemberId))
+            if (context.Teams.Any(e => e.Id == teamMember.AsMemberTeamId))
             {
-                var team = context.Teams.Find(teamMember.AsTeamMemberId);
+                var team = context.Teams.Find(teamMember.AsMemberTeamId);
 
                 teamView.Name = team.Name;
                 teamView.Project = team.Project;
@@ -240,12 +244,22 @@
             return View(teamView);
         }
 
+        private void fillTheViewBags()
+        {
+            var managers = context.Employees.Where(e => e.Position >= Position.TeamLeader);
+
+            ViewBag.ManagerId = new SelectList(managers, "Id", "FullNameAndEmail");
+            ViewBag.AsMemberTeamId = new SelectList(context.Teams, "Id", "NameAndDelivery");
+            ViewBag.AsLeaderTeamId = new SelectList(context.Teams, "Id", "NameAndDelivery");
+        }
+
         private void fillTheViewBags(Employee employee)
         {
-            ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-            ViewBag.AsTeamMemberId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamMemberId);
-            ViewBag.AsTeamLeaderId = new SelectList(context.Teams, "Id", "Name", employee.AsTeamLeaderId);
-            
+            var managers = context.Employees.Where(e => e.Position >= Position.TeamLeader);
+
+            ViewBag.ManagerId = new SelectList(managers, "Id", "FullNameAndEmail", employee.ManagerId);
+            ViewBag.AsMemberTeamId = new SelectList(context.Teams, "Id", "NameAndDelivery", employee.AsMemberTeamId);
+            ViewBag.AsLeaderTeamId = new SelectList(context.Teams, "Id", "NameAndDelivery", employee.AsLeaderTeamId);
         }
 
         protected override void Dispose(bool disposing)

@@ -100,16 +100,23 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ManagerId, "ManagerId", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("ManagerId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("ManagerId", null, "Select manager",htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ManagerId, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.TeamId, "TeamId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.AsLeaderTeamId, "As leader of a team", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("TeamId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.TeamId, "", new { @class = "text-danger" })
+                @Html.DropDownList("AsLeaderTeamId", null, "Select team to lead", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.AsLeaderTeamId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.AsMemberTeamId, "As member of a team", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("AsMemberTeamId", null, "Select team to be in",htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.AsMemberTeamId, "", new { @class = "text-danger" })
             </div>
         </div>
 

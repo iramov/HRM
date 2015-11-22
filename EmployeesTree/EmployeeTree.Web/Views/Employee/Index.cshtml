@@ -17,7 +17,8 @@
         <th>@Html.ActionLink("Delivery", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Delivery" })</th>
         <th>@Html.ActionLink("Email", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Email" })</th>
         <th>@Html.ActionLink("Manager", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Manager" })</th>
-        <th>@Html.ActionLink("Team", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Team" })</th>
+        <th>@Html.ActionLink("AsTeamLeader", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "AsTeamLeader" })</th>
+        <th>@Html.ActionLink("AsTeamMember", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "AsTeamMember" })</th>
             @*<th>
                 @Html.DisplayNameFor(model => model.FirstName)
             </th>
@@ -64,7 +65,10 @@
                 @Html.DisplayFor(modelItem => employee.Manager.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => employee.Team.Name)
+                @Html.DisplayFor(modelItem => employee.AsTeamLeader.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => employee.AsTeamMember.Name)
             </td>
             <td>
                 <div class="btn-group" role="group">

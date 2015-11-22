@@ -48,13 +48,13 @@
         public virtual Employee Manager { get; set; }
 
         [ForeignKey("AsTeamLeader")]
-        public int? AsTeamLeaderId { get; set; }
+        public int? AsLeaderTeamId { get; set; }
 
         [Display(Name = "As team leader assigned")]
         public virtual Team AsTeamLeader { get; set; }
 
         [ForeignKey("AsTeamMember")]
-        public int? AsTeamMemberId { get; set; }
+        public int? AsMemberTeamId { get; set; }
 
         [Display(Name = "As team member assigned")]
         public virtual Team AsTeamMember { get; set; }
