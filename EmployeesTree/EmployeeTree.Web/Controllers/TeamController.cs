@@ -133,7 +133,8 @@
                 {
                     foreach (var member in teamModel.Members)
                     {
-                        if (member.Position > leader.Position)
+                        var memberFromBase = context.Employees.Find(member.Id);
+                        if (memberFromBase.Position > leader.Position)
                         {
                             ModelState.AddModelError("", "The leader of the team must be the employee with the highest position.");
                         }
@@ -230,7 +231,8 @@
                 {
                     foreach (var member in teamModel.Members)
                     {
-                        if (member.Position > leader.Position)
+                        var memberFromBase = context.Employees.Find(member.Id);
+                        if (memberFromBase.Position > leader.Position)
                         {
                             ModelState.AddModelError("", "The leader of the team must be the employee with the highest position.");
                         }
@@ -240,7 +242,6 @@
                         }
                     }
                 }
-
             }
             else
             {
