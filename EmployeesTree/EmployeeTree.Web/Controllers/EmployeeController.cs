@@ -24,7 +24,6 @@
         {
             ViewBag.IsAscending = isAscending;
             var employees = context.Employees.Include(e => e.Manager).Include(e => e.AsTeamLeader).Include(e => e.AsTeamMember);
-            //employees = employees.ToList();
             var employeesList = new List<Employee>(employees);
             var orderFunc = GetOrderFunction(orderByColumn);
             var employeesSorted = isAscending ? employeesList.OrderBy(orderFunc) : employeesList.OrderByDescending(orderFunc);
@@ -86,11 +85,6 @@
         // GET: Employee/Create
         public ActionResult Create()
         {
-            var managerEmployees = context.Employees.Where(e => e.Position > Position.Senior);
-            //var freeTeamLeaders = context.Employees.Where(tl => tl.TeamId == null && tl.Position == Position.TeamLeader);
-            //managerEmployees.Concat(freeTeamLeaders);
-            //ViewBag.ManagerId = new SelectList(managerEmployees, "Id", "FirstName");
-            //ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name");
             fillTheViewBags();
             return View();
         }
@@ -100,14 +94,29 @@
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,Address,ManagerId,TeamId")] Employee employeeModel)
         {
+            if (employeeModel.Position == 0)
+            {
+                ModelState.AddModelError("Position", "The position field is required");
+            }
+            if (employeeModel.Delivery == 0)
+            {
+                ModelState.AddModelError("Delivery", "The delivery field is required");
+            }
+            if (employeeModel.ManagerId != null)
+            {
+                var manager = context.Employees.Find(employeeModel.ManagerId);
+                if (employeeModel.Position > manager.Position)
+                {
+                    ModelState.AddModelError("", "The employee cannot have manager with lower position then his");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
-                //ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-                //ViewBag.AsTeamMemberId = new SelectList(context.Teams, "Id", "Name", employee.AsMemberTeamId);
-                //ViewBag.AsTeamLeaderId = new SelectList(context.Teams, "Id", "Name", employee.AsLeaderTeamId);
                 fillTheViewBags(employeeModel);
                 return View(employeeModel);
             }
+
             context.Employees.Add(employeeModel);
             context.SaveChanges();
             return RedirectToAction("Index");
@@ -126,9 +135,6 @@
             {
                 return HttpNotFound();
             }
-            //ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-            //ViewBag.AsTeamMemberId = new SelectList(context.Teams, "Id", "Name", employee.AsMemberTeamId);
-            //ViewBag.AsTeamLeaderId = new SelectList(context.Teams, "Id", "Name", employee.AsLeaderTeamId);
             fillTheViewBags(employeeView);
             return View(employeeView);
         }
@@ -138,13 +144,51 @@
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,Address,CellNumber,ManagerId,TeamId")] Employee employeeModel)
         {
+            if (employeeModel.Position == 0)
+            {
+                ModelState.AddModelError("Position", "The position field is required");
+            }
+            if (employeeModel.Delivery == 0)
+            {
+                ModelState.AddModelError("Delivery", "The delivery field is required");
+            }
+            if (employeeModel.Position < Position.TeamLeader && employeeModel.AsLeaderTeamId != null)
+            {
+                ModelState.AddModelError("", "To be leader of a team the employee position must be higher then senior");
+            }
+            if (employeeModel.ManagerId != null)
+            {
+                var manager = context.Employees.Find(employeeModel.ManagerId);
+                if (employeeModel.Position > manager.Position)
+                {
+                    ModelState.AddModelError("", "The employee cannot have manager wiht lower position then his");
+                }
+                if (employeeModel.AsLeaderTeamId != null && employeeModel.AsMemberTeamId != null)
+                {
+                    if (employeeModel.AsLeaderTeamId == employeeModel.AsMemberTeamId)
+                    {
+                        ModelState.AddModelError("", "The employee cannot be duplicated as leader and member in a same team");
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
             {
-
-                //ViewBag.ManagerId = new SelectList(context.Employees, "Id", "FirstName", employee.ManagerId);
-                //ViewBag.TeamId = new SelectList(context.Teams, "Id", "Name", employee.TeamId);
                 fillTheViewBags(employeeModel);
                 return View(employeeModel);
+            }
+            
+            var employeeEditted = context.Employees.Find(employeeModel.Id);
+            employeeEditted = employeeModel;
+            if (employeeModel.AsLeaderTeamId != null)
+            {
+                var teamAsLeader = context.Teams.Find(employeeModel.AsLeaderTeamId);
+                teamAsLeader.LeaderId = employeeNew.Id;
+            }
+            if (employeeModel.AsMemberTeamId != null)
+            {
+                var teamAsMember = context.Teams.Find(employeeModel.AsMemberTeamId);
+                teamAsMember.Members.Add(employeeNew);
             }
             context.Entry(employeeModel).State = EntityState.Modified;
             context.SaveChanges();
@@ -175,7 +219,7 @@
             if (employee.AsLeaderTeamId != null)
             {
                 var employeeTeam = context.Teams.Find(employee.AsLeaderTeamId);
-                //If the current employees is team leader the team must be deleted and all its members.TeamId must be nullified
+                //If the current employees is team leader the team must be deleted and all its members.TeamId-s must be nullified
                 foreach (var member in employeeTeam.Members)
                 {
                     member.AsMemberTeamId = null;
@@ -244,6 +288,9 @@
             return View(teamView);
         }
 
+        /// <summary>
+        /// Fill the ViewBags with Managers("ManagerId"), team to be member("AsMemberTeamId") and teams to be leader("AsLeaderTeamId")
+        /// </summary>
         private void fillTheViewBags()
         {
             var managers = context.Employees.Where(e => e.Position >= Position.TeamLeader);
@@ -253,6 +300,9 @@
             ViewBag.AsLeaderTeamId = new SelectList(context.Teams, "Id", "NameAndDelivery");
         }
 
+        /// <summary>
+        /// Fill the ViewBags with Managers("ManagerId"), team to be member("AsMemberTeamId") and teams to be leader("AsLeaderTeamId") and selected indexes
+        /// </summary>
         private void fillTheViewBags(Employee employee)
         {
             var managers = context.Employees.Where(e => e.Position >= Position.TeamLeader);

@@ -350,6 +350,9 @@
             ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
         }
 
+        /// <summary>
+        /// Fill the ViewBags with Leaders("LeadersId"), Projects("ProjectsId") and Employees("FreeEmployees") and giving them selected values
+        /// </summary>
         private void fillTheViewBagsWithSelected(TeamWithEmployeesViewModel teamView)
         {
             var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader && (e.AsLeaderTeamId == null)).ToList();
