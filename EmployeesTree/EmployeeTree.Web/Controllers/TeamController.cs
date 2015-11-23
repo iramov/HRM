@@ -97,7 +97,7 @@
             {
                 foreach (var member in team.Members)
                 {
-                    member.AsMemberTeamId = null;
+                    member.TeamId = null;
                     member.ManagerId = null;
                 }
             }
@@ -176,9 +176,6 @@
             team.LeaderId = teamModel.LeaderId;
             team.ProjectId = teamModel.ProjectId;
 
-            var teamLead = context.Employees.Find(teamModel.LeaderId);
-            teamLead.AsLeaderTeamId = team.Id;
-
             //Changing employees Manager and Delivery to be the same as their current team and after that adding them in the team
             if (teamModel.Members != null)
             {
@@ -187,7 +184,7 @@
                     var teamMember = context.Employees.Find(employee.Id);
                     teamMember.ManagerId = team.LeaderId;
                     teamMember.Delivery = team.Delivery;
-                    teamMember.AsMemberTeamId = team.Id;
+                    //teamMember.TeamId = team.Id;
                     team.Members.Add(teamMember);
                 }
             }
@@ -286,7 +283,7 @@
                     foreach (var memberToRemove in subractOldFromNewMembers)
                     {
                         //var employeeDeleteTeam = context.Employees.Find(memberToRemove.Id);
-                        memberToRemove.AsMemberTeamId = null;
+                        memberToRemove.TeamId = null;
                         memberToRemove.ManagerId = null;
                     }
                 }
@@ -342,8 +339,8 @@
         /// </summary>
         private void fillTheViewBags()
         {
-            var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader && (e.AsLeaderTeamId == null) ).ToList();
-            var freeEmployees = context.Employees.Where(e => e.AsMemberTeamId == null);
+            var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader).ToList();
+            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
 
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
@@ -355,8 +352,8 @@
         /// </summary>
         private void fillTheViewBagsWithSelected(TeamWithEmployeesViewModel teamView)
         {
-            var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader && (e.AsLeaderTeamId == null)).ToList();
-            var freeEmployees = context.Employees.Where(e => e.AsMemberTeamId == null);
+            var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader).ToList();
+            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
 
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", teamView.LeaderId);
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", teamView.ProjectId);

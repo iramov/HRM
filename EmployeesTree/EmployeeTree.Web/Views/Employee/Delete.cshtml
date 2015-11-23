@@ -91,17 +91,12 @@
             @Html.DisplayFor(model => model.Manager.FirstName)
         </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.AsTeamLeader.Name)
-        </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.AsTeamMember)
+            @Html.DisplayNameFor(model => model.Team)
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.AsTeamMember.Name)
+            @Html.DisplayFor(model => model.Team.Name)
         </dd>
-
     </dl>
 
     @using (Html.BeginForm()) {

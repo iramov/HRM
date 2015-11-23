@@ -53,10 +53,10 @@ namespace EmployeeTree.Models
 
         public override int GetHashCode()
         {
-            if ((Id == null))
-            {
-                return base.GetHashCode();
-            }
+            //if ((Id == null))
+            //{
+            //    return base.GetHashCode();
+            //}
             return Id.GetHashCode();
         }
 

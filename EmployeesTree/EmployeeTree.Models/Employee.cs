@@ -47,17 +47,13 @@
         [Display(Name = "Manager name")]
         public virtual Employee Manager { get; set; }
 
-        [ForeignKey("AsTeamLeader")]
-        public int? AsLeaderTeamId { get; set; }
+        [ForeignKey("Team")]
+        public int? TeamId { get; set; }
 
-        [Display(Name = "As team leader assigned")]
-        public virtual Team AsTeamLeader { get; set; }
+        [Display(Name = "Team as member")]
+        public virtual Team Team { get; set; }
 
-        [ForeignKey("AsTeamMember")]
-        public int? AsMemberTeamId { get; set; }
 
-        [Display(Name = "As team member assigned")]
-        public virtual Team AsTeamMember { get; set; }
 
         public string FullNameAndEmail
         {
@@ -67,14 +63,12 @@
             }
         }
 
-
         public override int GetHashCode()
         {
-            if ((Id == null))
-            {
-                return base.GetHashCode();
-            }
-            //string stringRepresentation = FirstName + LastName + Email;
+            //if ((Id == null))
+            //{
+            //    return base.GetHashCode();
+            //}
             return Id.GetHashCode();
         }
 
