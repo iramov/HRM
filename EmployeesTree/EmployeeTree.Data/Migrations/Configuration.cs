@@ -286,19 +286,22 @@ namespace EmployeeTree.Data.Migrations
               {
                   LeaderId = 6,
                   Name = "HR system Back End",
-                  ProjectId = 1
+                  ProjectId = 1,
+                  Delivery = DeliveryUnit.Entertainment
               },
               new Team
               {
                   LeaderId = 7,
                   Name = "HR system Front End",
-                  ProjectId = 1
+                  ProjectId = 1,
+                  Delivery = DeliveryUnit.Entertainment
               },
               new Team
               {
                   LeaderId = 6, 
                   Name = "NASA system",
-                  ProjectId = 2
+                  ProjectId = 2,
+                  Delivery = DeliveryUnit.Entertainment
               }};
 
             foreach (var item in teams)
@@ -314,12 +317,14 @@ namespace EmployeeTree.Data.Migrations
             var projects = new List<Project>{
                   new Project
                   {
-                      Name = "HR management system"
+                      Name = "HR management system",
+                      Delivery = DeliveryUnit.Entertainment
                       //Description = "System that helps Hr's to manage employees in company"
                   },
                   new Project
                   {
-                      Name = "New NASA operating system"
+                      Name = "New NASA operating system",
+                      Delivery = DeliveryUnit.Finance
                       //Description = "It's top secret"
                   }};
 
