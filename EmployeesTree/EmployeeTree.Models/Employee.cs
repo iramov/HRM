@@ -34,8 +34,8 @@
 
         public double Salary { get; set; }
 
-        [Display(Name = "Work place")]
-        public string WorkPlace { get; set; }
+        [Display(Name = "Workplace")]
+        public string Workplace { get; set; }
 
         [Required(ErrorMessage = "The email address is required")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
