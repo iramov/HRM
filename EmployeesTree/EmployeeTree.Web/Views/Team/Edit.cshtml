@@ -73,25 +73,29 @@
                 foreach (var member in Model.Members)
                 {
                     int index = Model.Members.IndexOf(member);
-                    <tr>
-                        <td>
-                            @*@Model.Members.IndexOf(member)
-                                @Model.Members[Model.Members.IndexOf(member)].FirstName
-                                @Html.DropDownListFor(model => model.Members[index].Id, new SelectList(Model.Members, "Id", "FirstName", Model.Members[index].Id), new { data_container = "members", @class = "form-control" })*@
-                            <div class="form-group">
-                                @Html.Label("Team member: ", new { @class = "control-label col-md-2" })
-                                @Html.DisplayFor(m => m.Members[index].FullNameAndEmail)
-                                @Html.HiddenFor(model => model.Members[index].Id, new { data_container = "members" })
-                            </div>
 
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-default btn-group-sm" id="delete-employee-btn">
-                                Delete
-                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                            </button>
-                        </td>
-                    </tr>
+                    if (member.Id != Model.LeaderId)
+                    {
+                        <tr>
+                            <td>
+                                @*@Model.Members.IndexOf(member)
+                                    @Model.Members[Model.Members.IndexOf(member)].FirstName
+                                    @Html.DropDownListFor(model => model.Members[index].Id, new SelectList(Model.Members, "Id", "FirstName", Model.Members[index].Id), new { data_container = "members", @class = "form-control" })*@
+                                <div class="form-group">
+                                    @Html.Label("Team member: ", new { @class = "control-label col-md-2" })
+                                    @Html.DisplayFor(m => m.Members[index].FullNameAndEmail)
+                                    @Html.HiddenFor(model => model.Members[index].Id, new { data_container = "members" })
+                                </div>
+
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-default btn-group-sm" id="delete-employee-btn">
+                                    Delete
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
                 }
             }
 
