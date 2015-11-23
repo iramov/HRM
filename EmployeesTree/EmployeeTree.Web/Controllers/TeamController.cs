@@ -97,7 +97,6 @@
             {
                 foreach (var member in team.Members)
                 {
-                    member.TeamId = null;
                     member.ManagerId = null;
                 }
             }
@@ -144,7 +143,6 @@
                         }
                     }
                 }
-
             }
             else
             {
@@ -176,6 +174,8 @@
             team.LeaderId = teamModel.LeaderId;
             team.ProjectId = teamModel.ProjectId;
 
+            var teamLeader = context.Employees.Find(teamModel.LeaderId);
+            teamLeader.Teams.Add(team);
             //Changing employees Manager and Delivery to be the same as their current team and after that adding them in the team
             if (teamModel.Members != null)
             {
@@ -184,7 +184,6 @@
                     var teamMember = context.Employees.Find(employee.Id);
                     teamMember.ManagerId = team.LeaderId;
                     teamMember.Delivery = team.Delivery;
-                    //teamMember.TeamId = team.Id;
                     team.Members.Add(teamMember);
                 }
             }
@@ -283,7 +282,7 @@
                     foreach (var memberToRemove in subractOldFromNewMembers)
                     {
                         //var employeeDeleteTeam = context.Employees.Find(memberToRemove.Id);
-                        memberToRemove.TeamId = null;
+                        //memberToRemove.TeamId = null;
                         memberToRemove.ManagerId = null;
                     }
                 }
@@ -340,11 +339,11 @@
         private void fillTheViewBags()
         {
             var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader).ToList();
-            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
+            var freeEmployees = context.Employees.Where(e => e.Teams == null);
 
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
-            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail");
+            ViewBag.FreeEmployees = new SelectList(context.Employees, "Id", "FullNameAndEmail");
         }
 
         /// <summary>
@@ -353,11 +352,11 @@
         private void fillTheViewBagsWithSelected(TeamWithEmployeesViewModel teamView)
         {
             var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader).ToList();
-            var freeEmployees = context.Employees.Where(e => e.TeamId == null);
+            var freeEmployees = context.Employees.Where(e => e.Teams == null);
 
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", teamView.LeaderId);
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", teamView.ProjectId);
-            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNameAndEmail", teamView.Members.Select(m => m.Id));
+            ViewBag.FreeEmployees = new SelectList(context.Employees, "Id", "FullNameAndEmail"); //, teamView.Members.Select(m => m.Id)
         }
 
         protected override void Dispose(bool disposing)

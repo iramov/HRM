@@ -17,7 +17,7 @@
         <th>@Html.ActionLink("Delivery", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Delivery" })</th>
         <th>@Html.ActionLink("Email", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Email" })</th>
         <th>@Html.ActionLink("Manager", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Manager" })</th>
-        <th>@Html.ActionLink("As team member", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Team" })</th>
+        <th>@Html.ActionLink("Teams", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Teams" })</th>
     </tr>
 
     @foreach (var employee in Model)
@@ -41,9 +41,16 @@
             <td>
                 @Html.DisplayFor(modelItem => employee.Manager.FirstName)
             </td>
+            
             <td>
-                @Html.DisplayFor(modelItem => employee.Team.Name)
+                <ul>
+                    @foreach (var team in employee.Teams)
+                    {
+                        <li>@team.Name</li>
+                    }
+                </ul>
             </td>
+            
             <td>
                 <div class="btn-group" role="group">
                     <a class="btn btn-default" href="@Url.Action("Edit", "Employee", new { id = employee.Id })">

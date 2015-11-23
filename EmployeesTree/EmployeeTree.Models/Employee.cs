@@ -10,6 +10,11 @@
     /// </summary>
     public class Employee
     {
+        public Employee() 
+        {
+            this.Teams = new HashSet<Team>();
+        }
+
         public int Id { get; set; }
 
         [Required]
@@ -47,11 +52,13 @@
         [Display(Name = "Manager name")]
         public virtual Employee Manager { get; set; }
 
-        [ForeignKey("Team")]
-        public int? TeamId { get; set; }
+        //[ForeignKey("Team")]
+        //public int? TeamId { get; set; }
 
-        [Display(Name = "Team as member")]
-        public virtual Team Team { get; set; }
+        //[Display(Name = "Team as member")]
+        //public virtual Team Team { get; set; }+
+
+        public virtual ICollection<Team> Teams { get; set; }
 
 
 

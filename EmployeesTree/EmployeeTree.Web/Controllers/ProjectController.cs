@@ -241,22 +241,6 @@
 
             }
 
-
-            //if (projectModel.Teams != null)
-            //{
-            //    foreach (var team in projectEditted.Teams)
-            //    {
-            //        team.ProjectId = null;
-            //    }
-            //    foreach (var team in projectModel.Teams)
-            //    {
-            //        var teamToAdd = context.Teams.Find(team.Id);
-            //        projectEditted.Teams.Add(teamToAdd);
-            //    }
-
-            //}
-
-            //context.Projects.Add(projectEditted);
             context.SaveChanges();
             return RedirectToAction("Index");
 

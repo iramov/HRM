@@ -23,7 +23,7 @@
         public ActionResult Index(bool isAscending = false, string orderByColumn = null)
         {
             ViewBag.IsAscending = isAscending;
-            var employees = context.Employees.Include(e => e.Manager).Include(e => e.Team);
+            var employees = context.Employees.Include(e => e.Manager); //.Include(e => e.Team)
             var employeesList = new List<Employee>(employees);
             var orderFunc = GetOrderFunction(orderByColumn);
             var employeesSorted = isAscending ? employeesList.OrderBy(orderFunc) : employeesList.OrderByDescending(orderFunc);
@@ -53,9 +53,9 @@
                 case "Manager":
                     orderFunc = employee => employee.ManagerId;
                     break;
-                case "Team":
-                    orderFunc = employee => employee.TeamId;
-                    break;
+                //case "Team":
+                //    orderFunc = employee => employee.TeamId;
+                //    break;
                 default:
                     orderFunc = employee => employee.Id;
                     break;
@@ -89,7 +89,7 @@
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,Address,ManagerId,TeamId")] Employee employeeModel)
+        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,Address,ManagerId")] Employee employeeModel)
         {
             if (employeeModel.Position == 0)
             {
@@ -236,53 +236,53 @@
 
         public ActionResult EmployeeTeamPreview(int id)
         {
-            var teamView = new EmployeeTeamViewModel();
-            var teamMember = context.Employees.Find(id);
+            //var teamView = new EmployeeTeamViewModel();
+            //var teamMember = context.Employees.Find(id);
 
-            if (context.Teams.Any(e => e.Id == teamMember.TeamId))
-            {
-                var team = context.Teams.Find(teamMember.TeamId);
+            //if (context.Teams.Any(e => e.Id == teamMember.TeamId))
+            //{
+            //    var team = context.Teams.Find(teamMember.TeamId);
 
-                teamView.Name = team.Name;
-                teamView.Project = team.Project;
-                teamView.Members = team.Members;
-                teamView.Delivery = team.Delivery;
+            //    teamView.Name = team.Name;
+            //    teamView.Project = team.Project;
+            //    teamView.Members = team.Members;
+            //    teamView.Delivery = team.Delivery;
 
-                var teamLeaderPosition = team.Leader.Position;
-                switch (teamLeaderPosition)
-                {
-                    case Position.TeamLeader:
-                        teamView.TeamLeader = team.Leader;
-                        break;
-                    case Position.ProjectManager:
-                        teamView.TeamLeader = team.Leader;
-                        break;
-                    case Position.DeliveryDirector:
-                        teamView.TeamLeader = team.Leader;
-                        break;
-                    case Position.CEO:
-                        teamView.TeamLeader = team.Leader;
-                        break;
-                    default:
-                        break;
-                }
+            //    var teamLeaderPosition = team.Leader.Position;
+            //    switch (teamLeaderPosition)
+            //    {
+            //        case Position.TeamLeader:
+            //            teamView.TeamLeader = team.Leader;
+            //            break;
+            //        case Position.ProjectManager:
+            //            teamView.TeamLeader = team.Leader;
+            //            break;
+            //        case Position.DeliveryDirector:
+            //            teamView.TeamLeader = team.Leader;
+            //            break;
+            //        case Position.CEO:
+            //            teamView.TeamLeader = team.Leader;
+            //            break;
+            //        default:
+            //            break;
+            //    }
 
-                if (teamView.TeamLeader.Manager != null)
-                {
-                    teamView.ProjectManager = teamView.TeamLeader.Manager;
-                    if (teamView.ProjectManager.Manager != null)
-                    {
-                        teamView.DeliveryDirector = teamView.ProjectManager.Manager;
-                        if (teamView.DeliveryDirector.Manager != null)
-                        {
-                            teamView.CEO = teamView.DeliveryDirector.Manager;
-                        }
-                    }
-                }
+            //    if (teamView.TeamLeader.Manager != null)
+            //    {
+            //        teamView.ProjectManager = teamView.TeamLeader.Manager;
+            //        if (teamView.ProjectManager.Manager != null)
+            //        {
+            //            teamView.DeliveryDirector = teamView.ProjectManager.Manager;
+            //            if (teamView.DeliveryDirector.Manager != null)
+            //            {
+            //                teamView.CEO = teamView.DeliveryDirector.Manager;
+            //            }
+            //        }
+            //    }
 
-            }
+            //}
 
-            return View(teamView);
+            return View();
         }
 
         /// <summary>
@@ -293,7 +293,7 @@
             var managers = context.Employees.Where(e => e.Position >= Position.TeamLeader);
 
             ViewBag.ManagerId = new SelectList(managers, "Id", "FullNameAndEmail");
-            ViewBag.TeamId = new SelectList(context.Teams, "Id", "NameAndDelivery");
+            //ViewBag.TeamId = new SelectList(context.Teams, "Id", "NameAndDelivery");
         }
 
         /// <summary>
@@ -305,7 +305,7 @@
             var managers = context.Employees.Where(e => e.Position >= Position.TeamLeader);
 
             ViewBag.ManagerId = new SelectList(managers, "Id", "FullNameAndEmail", employee.ManagerId);
-            ViewBag.TeamId = new SelectList(context.Teams, "Id", "NameAndDelivery", employee.TeamId);
+            //ViewBag.TeamId = new SelectList(context.Teams, "Id", "NameAndDelivery", employee.TeamId);
         }
 
         protected override void Dispose(bool disposing)

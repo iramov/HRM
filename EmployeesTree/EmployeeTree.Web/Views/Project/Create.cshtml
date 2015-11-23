@@ -30,12 +30,15 @@
             </div>
         </div>
 
-        <button type="button" class="btn btn-default btn-sm" id="add-team-btn">
-            Add team
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-        </button>
+        <div class ="form-group">
+            @Html.LabelFor(model => model.Teams, htmlAttributes: new { @class = "control-label col-md-2" })
+            <button type="button" class="btn btn-default btn-sm" id="add-team-btn">
+                Add team
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+        </div>
 
-        @if (Model.Teams != null)
+        @*@if (Model.Teams != null)
         {
             foreach (var team in Model.Teams)
             {
@@ -56,7 +59,7 @@
                     </td>
                 </tr>
             }
-        }
+        }*@
 
         <table class="table" id="tableTeams">
             <tr id="template-row">
