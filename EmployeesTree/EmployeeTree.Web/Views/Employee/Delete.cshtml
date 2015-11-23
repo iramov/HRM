@@ -52,11 +52,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.WorkPlace)
+            @Html.DisplayNameFor(model => model.Workplace)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.WorkPlace)
+            @Html.DisplayFor(model => model.Workplace)
         </dd>
 
         <dt>
@@ -92,10 +92,15 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Team)
+            @Html.DisplayNameFor(model => model.Teams)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Team.Name)
+            <ul>
+                @foreach (var team in Model.Teams)
+                {
+                    <li>@team.Name</li>
+                }
+            </ul>
         </dd>
     </dl>
 
