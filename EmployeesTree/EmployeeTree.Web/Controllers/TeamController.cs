@@ -336,7 +336,8 @@
         /// </summary>
         private void fillTheViewBags()
         {
-            var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader).ToList();
+            var freeLeaders = context.Employees.Where(e => e.Position > Position.TeamLeader ||
+                                                            (e.Teams.Count == 0 && e.Position == Position.TeamLeader)).ToList();
             var freeEmployees = context.Employees.Where(e => e.Position > Position.TeamLeader || 
                                                             (e.Teams.Count == 0 && e.Position <= Position.TeamLeader)).ToList();
 
@@ -350,7 +351,8 @@
         /// </summary>
         private void fillTheViewBagsWithSelected(TeamWithEmployeesViewModel teamView)
         {
-            var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader).ToList();
+            var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader ||
+                                                            (e.Teams.Count == 0 && e.Position == Position.TeamLeader)).ToList();
             var freeEmployees = context.Employees.Where(e => e.Position > Position.TeamLeader ||
                                                             (e.Teams.Count == 0 && e.Position <= Position.TeamLeader)).ToList();
 
