@@ -12,6 +12,8 @@
 
         IDbSet<Project> Projects { get; set; }
 
+        IDbSet<Address> Addresses { get; set; }
+
         void SaveChanges();
 
         DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;

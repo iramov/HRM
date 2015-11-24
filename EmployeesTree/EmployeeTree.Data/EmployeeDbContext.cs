@@ -23,6 +23,8 @@
 
         public IDbSet<Project> Projects { get; set; }
 
+        public IDbSet<Address> Addresses { get; set; }
+
         public new void SaveChanges()
         {
             base.SaveChanges();

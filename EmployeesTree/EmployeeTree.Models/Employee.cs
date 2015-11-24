@@ -46,6 +46,9 @@
         [Display(Name = "Cell number")]
         public string CellNumber { get; set; }
 
+        [ForeignKey("Address")]
+        public int? AddressId { get; set; }
+
         public Address Address { get; set; }
 
         [ForeignKey("Manager")]

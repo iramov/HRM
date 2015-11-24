@@ -73,6 +73,7 @@
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            //Taking employee with its Address and giving it to the view
             var employees = context.Employees.Include(e => e.Address);
             var employeeView = employees.FirstOrDefault(e => e.Id == id);
             if (employeeView == null)
@@ -131,6 +132,7 @@
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            //Taking employee with its address fields
             var employees = context.Employees.Include(e => e.Address);
             var employeeView = employees.FirstOrDefault(e => e.Id == id);
             if (employeeView == null)
@@ -144,8 +146,9 @@
         // POST: Employee/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,Address,CellNumber,ManagerId,TeamId")] Employee employeeModel)
+        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Position,AddressId,Delivery,Salary,WorkPlace,Email,Address,CellNumber,ManagerId,TeamId")] Employee employeeModel)
         {
+            //Validations
             if (employeeModel.Position == 0)
             {
                 ModelState.AddModelError("Position", "The position field is required");
@@ -168,9 +171,14 @@
                 fillTheViewBags(employeeModel);
                 return View(employeeModel);
             }
-
+            if (employeeModel.AddressId != null)
+            {
+                employeeModel.Address.Id = employeeModel.AddressId.Value;
+            }
+            
             context.Entry(employeeModel).State = EntityState.Modified;
-
+            context.Entry(employeeModel.Address).State = EntityState.Modified;
+            
             context.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -199,7 +207,7 @@
             var employeeToDelete = context.Employees.Find(id);
             if (employeeToDelete.Teams != null)
             {
-                //Setting teams to static variable cos if we delete a team the count is changed dynamically
+                //Setting teams to variable as a copy with ToList cos if we delete a team the count is changed dynamically
                 var teamsToDelete = employeeToDelete.Teams.ToList();
                 foreach (var team in teamsToDelete)
                 {
@@ -213,6 +221,9 @@
                     }
                 }
             }
+            //If you delete employee thats is manager to other employees all its subordinates will get "null" ManagerId
+            //and the next time they are set to team it will be automatically changed
+            //or can be changed from editView
             var employeesToEdit = context.Employees.Where(e => e.ManagerId == employeeToDelete.Id).ToList();
             foreach (var employee in employeesToEdit)
             {
@@ -224,6 +235,12 @@
             return RedirectToAction("Index");
         }
 
+
+        /// <summary>
+        /// Selecting employee with position lower then TL and printing all its team members, TL, PM, DD, CEO
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>View with list of team members for the choosen employee</returns>
         public ActionResult EmployeeTeamPreview(int id)
         {
             var teamView = new EmployeeTeamViewModel();
@@ -284,7 +301,6 @@
             var managers = context.Employees.Where(e => e.Position >= Position.TeamLeader);
 
             ViewBag.ManagerId = new SelectList(managers, "Id", "FullNamePositionAndEmail");
-            //ViewBag.TeamId = new SelectList(context.Teams, "Id", "NameAndDelivery");
         }
 
         /// <summary>
@@ -293,10 +309,9 @@
         /// 
         private void fillTheViewBags(Employee employee)
         {
-            var managers = context.Employees.Where(e => e.Position >= employee.Position && e.Position >= Position.TeamLeader && e.Id != employee.Id);
+            var managers = context.Employees.Where(e => e.Position >= employee.Position && e.Position >= Position.TeamLeader && e.Id != employee.Id).OrderBy(e => e.Position);
 
             ViewBag.ManagerId = new SelectList(managers, "Id", "FullNamePositionAndEmail", employee.ManagerId);
-            //ViewBag.TeamId = new SelectList(context.Teams, "Id", "NameAndDelivery", employee.TeamId);
         }
 
         protected override void Dispose(bool disposing)

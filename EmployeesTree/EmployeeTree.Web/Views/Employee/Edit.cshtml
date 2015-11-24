@@ -62,6 +62,7 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Address.Country, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Address.Country, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.AddressId)
             </div>
         </div>
 
