@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.Text;
 
     /// <summary>
     /// Each employee have information about his first and last name, position, salary, workplace, email, phone, home address and his manager.
@@ -67,6 +68,47 @@
             get
             {
                 return FirstName + " " + LastName + ", " + Email;
+            }
+        }
+
+        public string FullNamePositionAndEmail
+        {
+            get
+            {
+                var returnString = "";
+                switch (Position)
+                {
+                    case Position.Unknown:
+                        returnString = String.Format("Unknown: {0} {1}, {2}", FirstName, LastName, Email);
+                        break;
+                    case Position.Trainee:
+                        returnString = String.Format("Trainee: {0} {1}, {2}", FirstName, LastName, Email);
+                        break;
+                    case Position.Junior:
+                        returnString = String.Format("Junior: {0} {1}, {2}", FirstName, LastName, Email);
+                        break;
+                    case Position.Intermediate:
+                        returnString = String.Format("Intermediate: {0} {1}, {2}", FirstName, LastName, Email);
+                        break;
+                    case Position.Senior:
+                        returnString = String.Format("Senior: {0} {1}, {2}", FirstName, LastName, Email);
+                        break;
+                    case Position.TeamLeader:
+                        returnString = String.Format("TL: {0} {1}, {2}", FirstName, LastName, Email);
+                        break;
+                    case Position.ProjectManager:
+                        returnString = String.Format("PM: {0} {1}, {2}", FirstName, LastName, Email);
+                        break;
+                    case Position.DeliveryDirector:
+                        returnString = String.Format("DD: {0} {1}, {2}", FirstName, LastName, Email);
+                        break;
+                    case Position.CEO:
+                        returnString = String.Format("CEO: {0} {1}, {2}", FirstName, LastName, Email);
+                        break;
+                    default:
+                        break;
+                }
+                return returnString;
             }
         }
 

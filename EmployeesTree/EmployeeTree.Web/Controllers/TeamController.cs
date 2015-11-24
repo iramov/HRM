@@ -337,11 +337,12 @@
         private void fillTheViewBags()
         {
             var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader).ToList();
-            var freeEmployees = context.Employees.Where(e => e.Teams == null);
+            var freeEmployees = context.Employees.Where(e => e.Position > Position.TeamLeader || 
+                                                            (e.Teams.Count == 0 && e.Position <= Position.TeamLeader)).ToList();
 
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail");
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNamePositionAndEmail");
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
-            ViewBag.FreeEmployees = new SelectList(context.Employees, "Id", "FullNameAndEmail");
+            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNamePositionAndEmail");
         }
 
         /// <summary>
@@ -350,11 +351,12 @@
         private void fillTheViewBagsWithSelected(TeamWithEmployeesViewModel teamView)
         {
             var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader).ToList();
-            var freeEmployees = context.Employees.Where(e => e.Teams == null);
+            var freeEmployees = context.Employees.Where(e => e.Position > Position.TeamLeader ||
+                                                            (e.Teams == null && e.Position <= Position.TeamLeader)).ToList();
 
-            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNameAndEmail", teamView.LeaderId);
+            ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNamePositionAndEmail", teamView.LeaderId);
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", teamView.ProjectId);
-            ViewBag.FreeEmployees = new SelectList(context.Employees, "Id", "FullNameAndEmail"); //, teamView.Members.Select(m => m.Id)
+            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNamePositionAndEmail"); //, teamView.Members.Select(m => m.Id)
         }
 
         protected override void Dispose(bool disposing)

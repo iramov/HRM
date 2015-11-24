@@ -283,7 +283,7 @@
         {
             var managers = context.Employees.Where(e => e.Position >= Position.TeamLeader);
 
-            ViewBag.ManagerId = new SelectList(managers, "Id", "FullNameAndEmail");
+            ViewBag.ManagerId = new SelectList(managers, "Id", "FullNamePositionAndEmail");
             //ViewBag.TeamId = new SelectList(context.Teams, "Id", "NameAndDelivery");
         }
 
@@ -293,9 +293,9 @@
         /// 
         private void fillTheViewBags(Employee employee)
         {
-            var managers = context.Employees.Where(e => e.Position >= Position.TeamLeader);
+            var managers = context.Employees.Where(e => e.Position >= employee.Position && e.Position >= Position.TeamLeader && e.Id != employee.Id);
 
-            ViewBag.ManagerId = new SelectList(managers, "Id", "FullNameAndEmail", employee.ManagerId);
+            ViewBag.ManagerId = new SelectList(managers, "Id", "FullNamePositionAndEmail", employee.ManagerId);
             //ViewBag.TeamId = new SelectList(context.Teams, "Id", "NameAndDelivery", employee.TeamId);
         }
 
