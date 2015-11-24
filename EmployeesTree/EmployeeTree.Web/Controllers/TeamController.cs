@@ -183,7 +183,10 @@
                 foreach (var employee in teamModel.Members)
                 {
                     var teamMember = context.Employees.Find(employee.Id);
-                    teamMember.ManagerId = team.LeaderId;
+                    if (teamMember.ManagerId == null)
+                    {
+                        teamMember.ManagerId = team.LeaderId;
+                    }
                     teamMember.Delivery = team.Delivery;
                     team.Members.Add(teamMember);
                 }
@@ -294,7 +297,7 @@
                     {
                         var employeeToDelete = context.Employees.Find(memberToRemove.Id);
                         //memberToRemove.TeamId = null;
-                        employeeToDelete.ManagerId = null;
+                        //employeeToDelete.ManagerId = null;
                         teamEditted.Members.Remove(employeeToDelete);
                     }
                 }
@@ -306,11 +309,21 @@
                     foreach (var memberToAdd in subractNewFromOldMemebers)
                     {
                         var employeeToAdd = context.Employees.Find(memberToAdd.Id);
-                        employeeToAdd.ManagerId = teamEditted.LeaderId;
+                        if (employeeToAdd.ManagerId == null)
+                        {
+                            employeeToAdd.ManagerId = teamEditted.LeaderId;
+                        }
                         employeeToAdd.Delivery = teamEditted.Delivery;
                         //employeeToAdd.TeamId = teamModel.Id;
                         teamEditted.Members.Add(employeeToAdd);
                     }
+                }
+            }
+            else
+            {
+                foreach (var member in teamEditted.Members)
+                {
+                    member.Teams.Remove(teamEditted);
                 }
             }
 
