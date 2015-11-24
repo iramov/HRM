@@ -72,13 +72,9 @@
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                     </a>
                 </div>
-                @if (employee.Position < Position.TeamLeader)
-                {
-                    <a class="btn btn-default" href="@Url.Action("EmployeeTeamPreview", "Employee", new { id = employee.Id })">
-                        Team preview
-                    </a>
-                }
-                
+                <a class="btn btn-default" href="@Url.Action("EmployeeTeamPreview", "Employee", new { id = employee.Id })">
+                    Team preview
+                </a>
             </td>
         </tr>
     }

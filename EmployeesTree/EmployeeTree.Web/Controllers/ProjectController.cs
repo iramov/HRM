@@ -106,7 +106,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Delivery, Teams, Description")]ProjectWithTeamsViewModel projectModel)
+        public ActionResult Create([Bind(Include = "Id,Name,Delivery, Teams, Discription")]ProjectWithTeamsViewModel projectModel)
         {
             //Validations
             if (projectModel.Delivery == 0)
@@ -114,13 +114,10 @@
                 ModelState.AddModelError("Delivery", "Delivery field is required");
             }
 
-            if (projectModel.Teams != null)
+            var disinctTeams = projectModel.Teams.Distinct();
+            if (disinctTeams.Count() < projectModel.Teams.Count)
             {
-                var disinctTeams = projectModel.Teams.Distinct();
-                if (disinctTeams.Count() < projectModel.Teams.Count)
-                {
-                    ModelState.AddModelError("Teams", "Each team may exists only once in a project.");
-                }
+                ModelState.AddModelError("Teams", "Each team may exists only once in a project.");
             }
 
             var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
@@ -186,20 +183,17 @@
         // POST: Project/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Delivery,Teams, Description")] ProjectWithTeamsViewModel projectModel)
+        public ActionResult Edit([Bind(Include = "Id,Name,Delivery,Teams")] ProjectWithTeamsViewModel projectModel)
         {
             //Validations
             if (projectModel.Delivery == 0)
             {
                 ModelState.AddModelError("Delivery", "Delivery field is required");
             }
-            if (projectModel.Teams != null)
+            var disinctTeams = projectModel.Teams.Distinct();
+            if (disinctTeams.Count() < projectModel.Teams.Count)
             {
-                var disinctTeams = projectModel.Teams.Distinct();
-                if (disinctTeams.Count() < projectModel.Teams.Count)
-                {
-                    ModelState.AddModelError("Teams", "Each team may exists only once in a project.");
-                }
+                ModelState.AddModelError("Teams", "Each team may exists only once in a project.");
             }
 
             var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
