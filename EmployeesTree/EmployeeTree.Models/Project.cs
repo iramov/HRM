@@ -27,6 +27,10 @@
         [Required]
         public DeliveryUnit Delivery { get; set; }
 
+        [Display(Name = "Project description")]
+        [DataType(DataType.MultilineText)]
+        public string Description { get; set; }
+
         [Display(Name = "Teams names")]
         public virtual ICollection<Team> Teams { get; set; }
 

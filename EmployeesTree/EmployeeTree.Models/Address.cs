@@ -13,5 +13,9 @@
         [Required]
         [Display(Name = "Street")]
         public string Street { get; set; }
+
+        [Required]
+        [Display(Name = "Country")]
+        public string Country { get; set; }
     }
 }

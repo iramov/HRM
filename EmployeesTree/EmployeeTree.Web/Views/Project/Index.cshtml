@@ -13,12 +13,6 @@
     <tr>
         <th>@Html.ActionLink("Name", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Name" })</th>
         <th>@Html.ActionLink("Delivery", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Delivery" })</th>
-        @*<th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Delivery)
-        </th>*@
         <th>
             @Html.DisplayNameFor(model => model.Teams)
         </th>

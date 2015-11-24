@@ -95,7 +95,7 @@
             {
                 ModelState.AddModelError("Position", "The position field is required");
             }
-            if (employeeModel.Delivery == 0)
+            if (employeeModel.Delivery == 0 && employeeModel.Position != Position.CEO)
             {
                 ModelState.AddModelError("Delivery", "The delivery field is required");
             }
@@ -145,7 +145,7 @@
             {
                 ModelState.AddModelError("Position", "The position field is required");
             }
-            if (employeeModel.Delivery == 0)
+            if (employeeModel.Delivery == 0 && employeeModel.Position != Position.CEO)
             {
                 ModelState.AddModelError("Delivery", "The delivery field is required");
             }
@@ -187,7 +187,7 @@
             //    var teamAsMember = context.Teams.Find(employeeModel.AsMemberTeamId);
             //    teamAsMember.Members.Add(employeeNew);
             //}
-            context.Entry(employeeModel).State = EntityState.Modified;
+            //context.Entry(employeeModel).State = EntityState.Modified;
             context.SaveChanges();
             return RedirectToAction("Index");
         }

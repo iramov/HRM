@@ -112,7 +112,7 @@
     <tr id="template-row">
         <td class="col-md-10">
             @Html.Label("Choose team member: ", new { @class = "control-label col-md-2" })
-            @Html.DropDownList("Members[index].Id", (SelectList)ViewBag.FreeEmployees, "Select team member", new { data_container = "members", @class = "form-control" })
+            @Html.DropDownList("Members[index].Id", (SelectList)ViewBag.FreeEmployees, new { data_container = "members", @class = "form-control" })
             @Html.ValidationMessageFor(model => model.Members, "", new { @class = "text-danger" })
         </td>
         <td id="td-delete-employee">

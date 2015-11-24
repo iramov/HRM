@@ -106,7 +106,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Delivery, Teams")]ProjectWithTeamsViewModel projectModel)
+        public ActionResult Create([Bind(Include = "Id,Name,Delivery, Teams, Discription")]ProjectWithTeamsViewModel projectModel)
         {
             //Validations
             if (projectModel.Delivery == 0)
@@ -137,6 +137,7 @@
             var projectToSave = new Project();
             projectToSave.Name = projectModel.Name;
             projectToSave.Delivery = projectModel.Delivery;
+            projectToSave.Description = projectModel.Description;
 
             if (projectModel.Teams != null)
             {
@@ -209,15 +210,16 @@
             }
 
             //Getting the edittedProject from the Db and setting its props
-            var projectEditted = context.Projects.Find(projectModel.Id);
-            projectEditted.Name = projectModel.Name;
-            projectEditted.Delivery = projectModel.Delivery;
+            var projectToEdit = context.Projects.Find(projectModel.Id);
+            projectToEdit.Name = projectModel.Name;
+            projectToEdit.Delivery = projectModel.Delivery;
+            projectToEdit.Description = projectModel.Description;
 
             if (projectModel.Teams != null)
             {
                 //Subtraction the Old from New team so we can get the teams who are removed from the project
 
-                var subractOldFromNewTeams = projectEditted.Teams.Except(projectModel.Teams);
+                var subractOldFromNewTeams = projectToEdit.Teams.Except(projectModel.Teams);
                 if (subractOldFromNewTeams.Any())
                 {
                     foreach (var team in subractOldFromNewTeams)
@@ -229,7 +231,7 @@
 
 
                 //Subtraction the New from Old team so we can get the teams who are added to the project
-                var subractNewFromOldTeams = projectModel.Teams.Except(projectEditted.Teams);
+                var subractNewFromOldTeams = projectModel.Teams.Except(projectToEdit.Teams);
                 if (subractNewFromOldTeams.Any())
                 {
                     foreach (var team in subractNewFromOldTeams)

@@ -52,11 +52,35 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.WorkPlace)
+            @Html.DisplayNameFor(model => model.Address.Country)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.WorkPlace)
+            @Html.DisplayFor(model => model.Address.Country)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Address.City)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address.City)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Address.Street)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address.Street)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Workplace)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Workplace)
         </dd>
 
         <dt>
@@ -92,10 +116,13 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Team)
+            @Html.DisplayNameFor(model => model.Teams)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Team.Name)
+            @foreach (var team in Model.Teams)
+            {
+                <li>@team.Name</li>
+            }
         </dd>
     </dl>
 

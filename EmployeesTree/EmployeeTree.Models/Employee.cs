@@ -39,6 +39,7 @@
 
         [Required(ErrorMessage = "The email address is required")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
+        [RegularExpression(@"[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}", ErrorMessage = "Email address is not valid")]
         public string Email { get; set; }
 
         [Display(Name = "Cell number")]
@@ -59,7 +60,6 @@
         //public virtual Team Team { get; set; }+
 
         public virtual ICollection<Team> Teams { get; set; }
-
 
 
         public string FullNameAndEmail

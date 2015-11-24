@@ -18,6 +18,10 @@ namespace EmployeeTree.Web.ViewModels
         [Required]
         public DeliveryUnit Delivery { get; set; }
 
+        [Display(Name = "Project discription")]
+        [DataType(DataType.MultilineText)]
+        public string Description { get; set; }
+
         [Display(Name = "Team names")]
         public virtual IList<Team> Teams { get; set; }
 

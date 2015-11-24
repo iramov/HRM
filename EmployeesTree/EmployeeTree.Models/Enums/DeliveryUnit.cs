@@ -5,6 +5,7 @@
         Unknown,
         Finance,
         Healthcare,
-        Entertainment
+        Entertainment,
+        Government
     }
 }

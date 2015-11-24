@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<EmployeeTree.Models.Employee>
+@using EmployeeTree.Web.Helpers
+@using EmployeeTree.Models
 
 @{
     ViewBag.Title = "Index";
@@ -30,10 +32,13 @@
                 @Html.DisplayFor(modelItem => employee.LastName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => employee.Position)
+                @(EnumHelper<Position>.GetDisplayValue((Position)employee.Position))
             </td>
             <td>
-                @Html.DisplayFor(modelItem => employee.Delivery)
+                @if (employee.Position != Position.CEO)
+                {
+                    @Html.DisplayFor(modelItem => employee.Delivery)
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => employee.Email)

@@ -15,17 +15,13 @@ namespace EmployeeTree.Data.Migrations
             this.AutomaticMigrationDataLossAllowed = true;
         }
 
-        
-         // Seed database 
+
+        // Seed database 
         protected override void Seed(EmployeeDbContext context)
         {
             if (!context.Projects.Any())
             {
                 SeedProjects(context);
-            }
-            if (!context.Teams.Any())
-            {
-                SeedTeams(context);
             }
             if (!context.Employees.Any())
             {
@@ -35,20 +31,23 @@ namespace EmployeeTree.Data.Migrations
         // Seed employees method
         private static void SeedEmployees(EmployeeDbContext context)
         {
-            var employee = new List<Employee>
+            var employee = new List<Employee>()
             {
                 new Employee
                 {
                     FirstName = "Hristo",
                     LastName = " Antov",
+                    Delivery = DeliveryUnit.Healthcare,
+                    //ManagerId = 6,
                     Position = Position.Trainee,
                     Salary = 2000,
                     Workplace = "SoftServe Bulgaria",
                     Email = "f0ri@abv.bg",
                     CellNumber = "0999 99 55 33",
-                    Address = {
+                    Address = new Address(){
                         Street = "Manastirski livadi",
-                        City = "Sofia"
+                        City = "Sofia",
+                        Country = "Bulgaria"
                         }
                 },
                 new Employee
@@ -56,27 +55,33 @@ namespace EmployeeTree.Data.Migrations
                     FirstName = "Iliqn",
                     LastName = " Ramov",
                     Position = Position.Trainee,
+                    //ManagerId = 6,
+                    Delivery = DeliveryUnit.Healthcare,
                     Salary = 2000,
                     Workplace = "SoftServe Bulgaria",
                     Email = "iliqn@abv.bg",
                     CellNumber = "0999 11 22 33",
-                    Address = {
+                    Address = new Address(){
                         Street = "Center",
-                        City = "Sofia"
+                        City = "Sofia",
+                        Country = "Bulgaria"
                         }
                 },
                 new Employee
                 {
                     FirstName = "Damqn",
                     LastName = " Grancharov",
+                    Delivery = DeliveryUnit.Healthcare,
                     Position = Position.Trainee,
+                    //ManagerId = 6,
                     Salary = 2000,
                     Workplace = "SoftServe Bulgaria",
                     Email = "damqn@abv.bg",
                     CellNumber = "0999 99 88 77",
-                    Address = {
+                    Address = new Address(){
                         Street = "Center",
-                        City = "Sofia"
+                        City = "Sofia",
+                        Country = "Bulgaria"
                         }
                 },
                 new Employee
@@ -84,26 +89,32 @@ namespace EmployeeTree.Data.Migrations
                     FirstName = "Boris",
                     LastName = " Borovski",
                     Position = Position.Trainee,
+                    //ManagerId = 6,
+                    Delivery = DeliveryUnit.Healthcare,
                     Salary = 2000,
                     Workplace = "SoftServe Bulgaria",
                     Email = "boris@abv.bg",
                     CellNumber = "0999 70 85 12",
-                    Address = {
+                    Address = new Address(){
                         Street = "Center",
-                        City = "Sofia"
+                        City = "Sofia",
+                        Country = "Bulgaria"
                         }},
                 new Employee
                 {
                     FirstName = "Mitko",
                     LastName = " Ivanov",
                     Position = Position.Trainee,
+                    //ManagerId = 6,
+                    Delivery = DeliveryUnit.Healthcare,
                     Salary = 2000,
                     Workplace = "SoftServe Bulgaria",
                     Email = "mitko@abv.bg",
                     CellNumber = "0999 11 22 33",
-                    Address = {
+                    Address = new Address(){
                         Street = "Center",
-                        City = "Sofia"
+                        City = "Sofia",
+                        Country = "Bulgaria"
                         }
                 },
                 new Employee
@@ -111,12 +122,15 @@ namespace EmployeeTree.Data.Migrations
                     FirstName = "Juliyan",
                     LastName = " Boyanov",
                     Position = Position.TeamLeader,
+                    //ManagerId = 10,
+                    Delivery = DeliveryUnit.Finance,
                     Salary = 10000,
                     Workplace = "SoftServe Bulgaria",
                     Email = "juliqn@gmail.bg",
-                    Address = {
+                    Address = new Address(){
                         Street = "Center",
-                        City = "Sofia"
+                        City = "Sofia",
+                        Country = "Bulgaria"
                         }
                 },
                 new Employee
@@ -124,186 +138,122 @@ namespace EmployeeTree.Data.Migrations
                     FirstName = "Desislav",
                     LastName = " Bonchev",
                     Position = Position.TeamLeader,
+                    //ManagerId = 10,
+                    Delivery = DeliveryUnit.Finance,
                     Salary = 2000,
                     Workplace = "SoftServe Bulgaria",
                     Email = "desislav@abv.bg",
                     CellNumber = "0979 423 432",
-                    Address = {
+                    Address = new Address(){
                         Street = "Center",
-                        City = "Sofia"
+                        City = "Sofia",
+                        Country = "Bulgaria"
+                        }
+                },
+                new Employee
+                {
+                    FirstName = "Vladimir",
+                    LastName = " Granicki",
+                    Position = Position.Junior,
+                    //ManagerId = 9,
+                    Delivery = DeliveryUnit.Healthcare,
+                    Salary = 2500,
+                    Workplace = "SoftServe Ukraine",
+                    Email = "vladimir@abv.bg",
+                    Address = new Address(){
+                        Street = "Center",
+                        City = "Lviv",
+                        Country = "Ukraine"
+                        }
+                },
+                new Employee
+                {
+                    FirstName = "Vitalii",
+                    LastName = " Klichko",
+                    Position = Position.TeamLeader,
+                    //ManagerId = 10,
+                    Delivery = DeliveryUnit.Entertainment,
+                    Salary = 5000,
+                    Workplace = "SoftServe Ukraine",
+                    Email = "vitalii@gmail.bg",
+                    CellNumber = "0999 11 22 33",
+                    Address = new Address(){
+                        Street = "Center",
+                        City = "Lviv",
+                        Country = "Ukraine"
+                        }
+                },
+                new Employee
+                {
+                    FirstName = "John",
+                    LastName = " Johnson",
+                    Position = Position.ProjectManager,
+                    //ManagerId = 12,
+                    Delivery = DeliveryUnit.Finance,
+                    Salary = 15000,
+                    Workplace = "SoftServe Ukraine",
+                    Email = "john@gmail.com",
+                    CellNumber = "0999 11 22 33",
+                    Address = new Address(){
+                        Street = "Center",
+                        City = "Lviv",
+                        Country = "Ukraine"
+                        }
+                },
+                new Employee
+                {
+                    FirstName = "Christopher",
+                    LastName = " Baker",
+                    Position = Position.ProjectManager,
+                    //ManagerId = 12,
+                    Delivery = DeliveryUnit.Finance,
+                    Salary = 15000,
+                    Workplace = "SoftServe Ukraine",
+                    Email = "christopher@gmail.com",
+                    CellNumber = "0999 11 22 33",
+                    Address = new Address(){
+                        Street = "Center",
+                        City = "Lviv",
+                        Country = "Ukraine"
+                        }
+                },
+                new Employee
+                {
+                    FirstName = "Andriy",
+                    LastName = " Stytsyuk",
+                    Position = Position.DeliveryDirector,
+                    //ManagerId = 13,
+                    Delivery = DeliveryUnit.Finance,
+                    Salary = 15000,
+                    Workplace = "SoftServe Ukraine",
+                    Email = "adriy@gmail.bg",
+                    CellNumber = "0999 11 22 33",
+                    Address = new Address(){
+                        Street = "Center",
+                        City = "Lviv",
+                        Country = "Ukraine"
+                        }
+                },
+                new Employee
+                {
+                    FirstName = "Oleh",
+                    LastName = " Denys",
+                    Position = Position.CEO,
+                    Salary = 20000,
+                    Workplace = "SoftServe Ukraine",
+                    Email = "oleh@gmail.com",
+                    CellNumber = "0999 11 22 33",
+                    Address = new Address(){
+                        Street = "Center",
+                        City = "Lviv",
+                        Country = "Ukraine"
                         }
                 }
-                //,
-                //new Employee
-                //{
-                //    FirstName = "Iliqn",
-                //    LastName = " Ramov",
-                //    Position = Position.Trainee,
-                //    Salary = 2000,
-                //    Workplace = "SoftServe Bulgaria",
-                //    Email = "iliqn@abv.bg",
-                //    CellNumber = "0999 11 22 33",
-                //    Address = {
-                //        Street = "Center",
-                //        City = "Sofia"
-                //        }
-
-                //    Name = "Vladimir",
-                //    Position = Position.Junior,
-                //    Salary = 10000,
-                //    Workplace = "SoftServe Ukraine",
-                //    Email = "vladimir@gmail.com",
-                //    Address = "Ukraine",
-                //    ProjectId = 2,
-                //    TeamId = 3
-                //},
-                //new Employee
-                //{
-                //    FirstName = "Iliqn",
-                //    LastName = " Ramov",
-                //    Position = Position.Trainee,
-                //    Salary = 2000,
-                //    Workplace = "SoftServe Bulgaria",
-                //    Email = "iliqn@abv.bg",
-                //    CellNumber = "0999 11 22 33",
-                //    Address = {
-                //        Street = "Center",
-                //        City = "Sofia"
-                //        }
-
-                //    Name = "Vitalii",
-                //    Position = Position.Senior,
-                //    Salary = 10000,
-                //    Workplace = "SoftServe Ukraine",
-                //    Email = "vitalii@gmail.com",
-                //    Address = "Ukraine",
-                //    ProjectId = 2,
-                //    TeamId = 3
-                //},
-                //new Employee
-                //{
-                //    FirstName = "Iliqn",
-                //    LastName = " Ramov",
-                //    Position = Position.Trainee,
-                //    Salary = 2000,
-                //    Workplace = "SoftServe Bulgaria",
-                //    Email = "iliqn@abv.bg",
-                //    CellNumber = "0999 11 22 33",
-                //    Address = {
-                //        Street = "Center",
-                //        City = "Sofia"
-                //        }
-
-                //    Name = "John Johnson",
-                //    Position = Position.ProjectManager,
-                //    Salary = 15000,
-                //    Workplace = "SoftServe Ukraine",
-                //    Email = "john@gmail.com",
-                //    Address = "Ukraine",
-                //    ProjectId = 1,
-                //    TeamId = 1
-                //},
-                //new Employee
-                //{
-                //    FirstName = "Iliqn",
-                //    LastName = " Ramov",
-                //    Position = Position.Trainee,
-                //    Salary = 2000,
-                //    Workplace = "SoftServe Bulgaria",
-                //    Email = "iliqn@abv.bg",
-                //    CellNumber = "0999 11 22 33",
-                //    Address = {
-                //        Street = "Center",
-                //        City = "Sofia"
-                //        }
-
-                //    Name = "Christopher Baker",
-                //    Position = Position.ProjectManager,
-                //    Salary = 15000,
-                //    Workplace = "SoftServe Ukraine",
-                //    Email = "christopher@gmail.com",
-                //    Address = "Ukraine",
-                //    ProjectId = 2,
-                //    TeamId = 3
-                    
-                //},
-                //new Employee
-                //{
-                //    FirstName = "Iliqn",
-                //    LastName = " Ramov",
-                //    Position = Position.Trainee,
-                //    Salary = 2000,
-                //    Workplace = "SoftServe Bulgaria",
-                //    Email = "iliqn@abv.bg",
-                //    CellNumber = "0999 11 22 33",
-                //    Address = {
-                //        Street = "Center",
-                //        City = "Sofia"
-                //        }
-
-                //    Name = "Andriy Stytsyuk",
-                //    Position = Position.DeliveryDirector,
-                //    Salary = 15000,
-                //    Workplace = "SoftServe Ukraine",
-                //    Email = "adriy@gmail.com",
-                //    Address = "Ukraine"
-                //},
-                //new Employee
-                //{
-                //    FirstName = "Iliqn",
-                //    LastName = " Ramov",
-                //    Position = Position.Trainee,
-                //    Salary = 2000,
-                //    Workplace = "SoftServe Bulgaria",
-                //    Email = "iliqn@abv.bg",
-                //    CellNumber = "0999 11 22 33",
-                //    Address = {
-                //        Street = "Center",
-                //        City = "Sofia"
-                //        }
-
-                //    Name = "Oleh Denys",
-                //    Position = Position.CEO,
-                //    Salary = 20000,
-                //    Workplace = "SoftServe Ukraine",
-                //    Email = "oleh@gmail.com",
-                //    Address = "Ukraine",                    
-                //
-        };
+            };
 
             foreach (var item in employee)
             {
                 context.Employees.AddOrUpdate(item);
-            }
-            context.SaveChanges();
-        }
-
-        // Seed teams method
-        private static void SeedTeams(EmployeeDbContext context)
-        {
-            var teams = new List<Team>{
-              new Team
-              {
-                  LeaderId = 6,
-                  Name = "HR system Back End",
-                  ProjectId = 1
-              },
-              new Team
-              {
-                  LeaderId = 7,
-                  Name = "HR system Front End",
-                  ProjectId = 1
-              },
-              new Team
-              {
-                  LeaderId = 6, 
-                  Name = "NASA system",
-                  ProjectId = 2
-              }};
-
-            foreach (var item in teams)
-            {
-                context.Teams.AddOrUpdate(item);
             }
             context.SaveChanges();
         }
@@ -314,13 +264,15 @@ namespace EmployeeTree.Data.Migrations
             var projects = new List<Project>{
                   new Project
                   {
-                      Name = "HR management system"
-                      //Description = "System that helps Hr's to manage employees in company"
+                      Name = "HR management system",
+                      Delivery = DeliveryUnit.Finance,
+                      Description = "System that helps Hr's to manage employees in company"
                   },
                   new Project
                   {
-                      Name = "New NASA operating system"
-                      //Description = "It's top secret"
+                      Name = "New NASA operating system",
+                      Delivery = DeliveryUnit.Entertainment,
+                      Description = "It's top secret"
                   }};
 
             foreach (var item in projects)
@@ -329,6 +281,6 @@ namespace EmployeeTree.Data.Migrations
             }
             context.SaveChanges();
         }
-         
+
     }
 }
