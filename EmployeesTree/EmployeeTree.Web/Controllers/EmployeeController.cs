@@ -25,7 +25,9 @@
             ViewBag.IsAscending = isAscending;
             var employees = context.Employees.Include(e => e.Manager); //.Include(e => e.Team)
             var employeesList = new List<Employee>(employees);
+            //Getting the lambda expression for the OrderBy func down below
             var orderFunc = GetOrderFunction(orderByColumn);
+            //sorting the list with employees and giving it to the view
             var employeesSorted = isAscending ? employeesList.OrderBy(orderFunc) : employeesList.OrderByDescending(orderFunc);
             return View(employeesSorted);
         }
@@ -71,12 +73,13 @@
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Employee employee = context.Employees.Find(id);
-            if (employee == null)
+            var employees = context.Employees.Include(e => e.Address);
+            var employeeView = employees.FirstOrDefault(e => e.Id == id);
+            if (employeeView == null)
             {
                 return HttpNotFound();
             }
-            return View(employee);
+            return View(employeeView);
         }
 
         // GET: Employee/Create
@@ -91,6 +94,7 @@
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Position,Delivery,Salary,WorkPlace,Email,CellNumber,Address,ManagerId")] Employee employeeModel)
         {
+            //Validations
             if (employeeModel.Position == 0)
             {
                 ModelState.AddModelError("Position", "The position field is required");
@@ -127,7 +131,8 @@
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var employeeView = context.Employees.Find(id);
+            var employees = context.Employees.Include(e => e.Address);
+            var employeeView = employees.FirstOrDefault(e => e.Id == id);
             if (employeeView == null)
             {
                 return HttpNotFound();
@@ -149,10 +154,6 @@
             {
                 ModelState.AddModelError("Delivery", "The delivery field is required");
             }
-            //if (employeeModel.Position < Position.TeamLeader && employeeModel.AsLeaderTeamId != null)
-            //{
-            //    ModelState.AddModelError("", "To be leader of a team the employee position must be higher then senior");
-            //}
             if (employeeModel.ManagerId != null)
             {
                 var manager = context.Employees.Find(employeeModel.ManagerId);
@@ -160,34 +161,16 @@
                 {
                     ModelState.AddModelError("", "The employee cannot have manager wiht lower position then his");
                 }
-                
+
             }
-            //if (employeeModel.AsLeaderTeamId != null && employeeModel.AsMemberTeamId != null)
-            //    {
-            //        if (employeeModel.AsLeaderTeamId == employeeModel.AsMemberTeamId)
-            //        {
-            //            ModelState.AddModelError("", "The employee cannot be duplicated as leader and member in a same team");
-            //        }
-            //    }
             if (!ModelState.IsValid)
             {
                 fillTheViewBags(employeeModel);
                 return View(employeeModel);
             }
-            
-            var employeeEditted = context.Employees.Find(employeeModel.Id);
-            employeeEditted = employeeModel;
-            //if (employeeModel.AsLeaderTeamId != null)
-            //{
-            //    var teamAsLeader = context.Teams.Find(employeeModel.AsLeaderTeamId);
-            //    teamAsLeader.LeaderId = employeeNew.Id;
-            //}
-            //if (employeeModel.AsMemberTeamId != null)
-            //{
-            //    var teamAsMember = context.Teams.Find(employeeModel.AsMemberTeamId);
-            //    teamAsMember.Members.Add(employeeNew);
-            //}
-            //context.Entry(employeeModel).State = EntityState.Modified;
+
+            context.Entry(employeeModel).State = EntityState.Modified;
+
             context.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -199,12 +182,13 @@
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Employee employee = context.Employees.Find(id);
-            if (employee == null)
+            var employees = context.Employees.Include(e => e.Address);
+            var employeeView = employees.FirstOrDefault(e => e.Id == id);
+            if (employeeView == null)
             {
                 return HttpNotFound();
             }
-            return View(employee);
+            return View(employeeView);
         }
 
         // POST: Employee/Delete/5
@@ -212,77 +196,84 @@
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var employee = context.Employees.Find(id);
-            //if (employee.AsLeaderTeamId != null)
-            //{
-            //    var employeeTeam = context.Teams.Find(employee.AsLeaderTeamId);
-            //    //If the current employees is team leader the team must be deleted and all its members.TeamId-s must be nullified
-            //    foreach (var member in employeeTeam.Members)
-            //    {
-            //        member.AsMemberTeamId = null;
-            //        member.ManagerId = null;
-            //    }
-            //    context.Teams.Remove(employeeTeam);
-            //}
-            //if (employee.AsMemberTeamId != null)
-            //{
-            //    var employeeTeam = context.Teams.Find(employee.AsLeaderTeamId);
-            //    employeeTeam.Members.Remove(employee);
-            //}
-            context.Employees.Remove(employee);
+            var employeeToDelete = context.Employees.Find(id);
+            if (employeeToDelete.Teams != null)
+            {
+                //Setting teams to static variable cos if we delete a team the count is changed dynamically
+                var teamsToDelete = employeeToDelete.Teams.ToList();
+                foreach (var team in teamsToDelete)
+                {
+                    if (team.LeaderId == employeeToDelete.Id)
+                    {
+                        context.Teams.Remove(team);
+                    }
+                    else
+                    {
+                        team.Members.Remove(employeeToDelete);
+                    }
+                }
+            }
+            var employeesToEdit = context.Employees.Where(e => e.ManagerId == employeeToDelete.Id).ToList();
+            foreach (var employee in employeesToEdit)
+            {
+                employee.ManagerId = null;
+            }
+
+            context.Employees.Remove(employeeToDelete);
             context.SaveChanges();
             return RedirectToAction("Index");
         }
 
         public ActionResult EmployeeTeamPreview(int id)
         {
-            //var teamView = new EmployeeTeamViewModel();
-            //var teamMember = context.Employees.Find(id);
+            var teamView = new EmployeeTeamViewModel();
+            var teamMember = context.Employees.Find(id);
 
-            //if (context.Teams.Any(e => e.Id == teamMember.TeamId))
-            //{
-            //    var team = context.Teams.Find(teamMember.TeamId);
+            if (teamMember.Teams.Count != 0)
+            {
+                //var team = context.Teams.Find(teamMember.TeamId);
+                var teams = teamMember.Teams.ToList();
 
-            //    teamView.Name = team.Name;
-            //    teamView.Project = team.Project;
-            //    teamView.Members = team.Members;
-            //    teamView.Delivery = team.Delivery;
+                teamView.Name = teams[0].Name;
+                teamView.Project = teams[0].Project;
+                teamView.Members = teams[0].Members;
+                teamView.Delivery = teams[0].Delivery;
 
-            //    var teamLeaderPosition = team.Leader.Position;
-            //    switch (teamLeaderPosition)
-            //    {
-            //        case Position.TeamLeader:
-            //            teamView.TeamLeader = team.Leader;
-            //            break;
-            //        case Position.ProjectManager:
-            //            teamView.TeamLeader = team.Leader;
-            //            break;
-            //        case Position.DeliveryDirector:
-            //            teamView.TeamLeader = team.Leader;
-            //            break;
-            //        case Position.CEO:
-            //            teamView.TeamLeader = team.Leader;
-            //            break;
-            //        default:
-            //            break;
-            //    }
+                var teamLeaderPosition = teams[0].Leader.Position;
+                switch (teamLeaderPosition)
+                {
+                    case Position.TeamLeader:
+                        teamView.TeamLeader = teams[0].Leader;
+                        break;
+                    case Position.ProjectManager:
+                        teamView.TeamLeader = teams[0].Leader;
+                        break;
+                    case Position.DeliveryDirector:
+                        teamView.TeamLeader = teams[0].Leader;
+                        break;
+                    case Position.CEO:
+                        teamView.TeamLeader = teams[0].Leader;
+                        break;
+                    default:
+                        break;
+                }
 
-            //    if (teamView.TeamLeader.Manager != null)
-            //    {
-            //        teamView.ProjectManager = teamView.TeamLeader.Manager;
-            //        if (teamView.ProjectManager.Manager != null)
-            //        {
-            //            teamView.DeliveryDirector = teamView.ProjectManager.Manager;
-            //            if (teamView.DeliveryDirector.Manager != null)
-            //            {
-            //                teamView.CEO = teamView.DeliveryDirector.Manager;
-            //            }
-            //        }
-            //    }
+                if (teamView.TeamLeader.Manager != null)
+                {
+                    teamView.ProjectManager = teamView.TeamLeader.Manager;
+                    if (teamView.ProjectManager.Manager != null)
+                    {
+                        teamView.DeliveryDirector = teamView.ProjectManager.Manager;
+                        if (teamView.DeliveryDirector.Manager != null)
+                        {
+                            teamView.CEO = teamView.DeliveryDirector.Manager;
+                        }
+                    }
+                }
 
-            //}
+            }
 
-            return View();
+            return View(teamView);
         }
 
         /// <summary>
