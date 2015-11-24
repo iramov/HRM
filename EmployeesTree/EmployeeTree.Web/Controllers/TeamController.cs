@@ -352,7 +352,7 @@
         {
             var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader).ToList();
             var freeEmployees = context.Employees.Where(e => e.Position > Position.TeamLeader ||
-                                                            (e.Teams == null && e.Position <= Position.TeamLeader)).ToList();
+                                                            (e.Teams.Count == 0 && e.Position <= Position.TeamLeader)).ToList();
 
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNamePositionAndEmail", teamView.LeaderId);
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", teamView.ProjectId);
