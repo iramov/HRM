@@ -16,7 +16,6 @@
 
         [Required]
         public int? LeaderId { get; set; }
-
         
         [Display(Name = "Leader name")]
         public virtual Employee Leader { get; set; }

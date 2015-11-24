@@ -15,18 +15,9 @@
         <th>@Html.ActionLink("Delivery", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Delivery" })</th>
         <th>@Html.ActionLink("Leader", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Leader" })</th>
         <th>@Html.ActionLink("Project", "Index", new { isAscending = !ViewBag.IsAscending, orderByColumn = "Project" })</th>
-       <th>
-                @Html.DisplayNameFor(model => model.Members)
-            </th>
-           @* <th>
-        @Html.DisplayNameFor(model => model.Delivery)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Leader)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Project.Name)
-    </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.Members)
+        </th>
         <th>
             Actions
         </th>

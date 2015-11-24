@@ -255,7 +255,7 @@
             {
                 ModelState.AddModelError("Delivery", "Delivery field is required");
             }
-
+            var teamEditted = context.Teams.Find(teamModel.Id);
             var modelStateErrors = this.ModelState.Values.SelectMany(m => m.Errors);
             var errors = ModelState.Where(m => m.Key.Contains("Members")).Select(m => m.Key);
             foreach (var error in errors)
@@ -265,15 +265,14 @@
 
             if (!ModelState.IsValid)
             {
-
+                teamModel.Members = teamEditted.Members.ToList();
                 fillTheViewBagsWithSelected(teamModel);
                 return View(teamModel);
             }
 
             //taking the current team from the context and updating its fields
-            var teamEditted = context.Teams.Find(teamModel.Id);
+            
             teamEditted.Name = teamModel.Name;
-            //teamEditted.LeaderId = teamModel.LeaderId;
             teamEditted.ProjectId = teamModel.ProjectId;
             teamEditted.Delivery = teamModel.Delivery;
 

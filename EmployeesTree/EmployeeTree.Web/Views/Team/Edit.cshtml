@@ -65,9 +65,6 @@
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         </button>
         <table class="table" id="tableEmployees">
-
-
-
             @if (Model.Members != null)
             {
                 foreach (var member in Model.Members)
@@ -78,9 +75,6 @@
                     {
                         <tr>
                             <td>
-                                @*@Model.Members.IndexOf(member)
-                                    @Model.Members[Model.Members.IndexOf(member)].FirstName
-                                    @Html.DropDownListFor(model => model.Members[index].Id, new SelectList(Model.Members, "Id", "FirstName", Model.Members[index].Id), new { data_container = "members", @class = "form-control" })*@
                                 <div class="form-group">
                                     @Html.Label("Team member: ", new { @class = "control-label col-md-2" })
                                     @Html.DisplayFor(m => m.Members[index].FullNameAndEmail)
