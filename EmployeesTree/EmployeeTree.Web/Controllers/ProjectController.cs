@@ -21,10 +21,12 @@
         // GET: Project
         public ActionResult Index(bool isAscending = false, string orderByColumn = null)
         {
+            //Sorting the projects and giving them to the view
             ViewBag.IsAscending = isAscending;
             var projects = context.Projects.ToList();
             var orderFunc = GetOrderFunction(orderByColumn);
             var projectsSorted = isAscending ? projects.OrderBy(orderFunc) : projects.OrderByDescending(orderFunc);
+
             return View(projectsSorted.ToList());
         }
 
@@ -142,6 +144,7 @@
             projectToSave.Delivery = projectModel.Delivery;
             projectToSave.Description = projectModel.Description;
 
+            //Adding teams to the project
             if (projectModel.Teams != null)
             {
                 foreach (var team in projectModel.Teams)
@@ -171,14 +174,16 @@
                 return HttpNotFound();
             }
 
+            //Creating ViewModel init its props and giving it to the view
             var projectToEdit = new ProjectWithTeamsViewModel();
             projectToEdit.Id = project.Id;
             projectToEdit.Delivery = project.Delivery;
             projectToEdit.Name = project.Name;
             projectToEdit.Teams = project.Teams.ToList();
 
+            //Giving teams to the view who are not currently working on this project
             var allTeams = context.Teams.ToList();
-            var subtractTeams = allTeams.Except(projectToEdit.Teams).ToList();
+            var subtractTeams = allTeams.Except(projectToEdit.Teams).OrderBy(e => e.Delivery).ToList();
             ViewBag.Teams = new SelectList(subtractTeams, "Id", "NameAndDelivery");
             return View(projectToEdit);
         }
@@ -224,7 +229,6 @@
             if (projectModel.Teams != null)
             {
                 //Subtraction the Old from New team so we can get the teams who are removed from the project
-
                 var subractOldFromNewTeams = projectToEdit.Teams.Except(projectModel.Teams);
                 if (subractOldFromNewTeams.Any())
                 {
@@ -234,7 +238,6 @@
                         teamRemoveProject.ProjectId = null;
                     }
                 }
-
 
                 //Subtraction the New from Old team so we can get the teams who are added to the project
                 var subractNewFromOldTeams = projectModel.Teams.Except(projectToEdit.Teams);
@@ -247,6 +250,13 @@
                     }
                 }
 
+            }
+            else
+            {
+                foreach (var teamRemoveProject in projectToEdit.Teams)
+                {
+                    teamRemoveProject.ProjectId = null;
+                }
             }
 
             context.SaveChanges();

@@ -22,6 +22,7 @@
         // GET: Employee
         public ActionResult Index(bool isAscending = false, string orderByColumn = null)
         {
+            //Sorting the employees by column and giving them to the view sorted
             ViewBag.IsAscending = isAscending;
             var employees = context.Employees.Include(e => e.Manager); //.Include(e => e.Team)
             var employeesList = new List<Employee>(employees);
@@ -29,6 +30,7 @@
             var orderFunc = GetOrderFunction(orderByColumn);
             //sorting the list with employees and giving it to the view
             var employeesSorted = isAscending ? employeesList.OrderBy(orderFunc) : employeesList.OrderByDescending(orderFunc);
+
             return View(employeesSorted);
         }
 
@@ -55,9 +57,6 @@
                 case "Manager":
                     orderFunc = employee => employee.ManagerId;
                     break;
-                //case "Team":
-                //    orderFunc = employee => employee.TeamId;
-                //    break;
                 default:
                     orderFunc = employee => employee.Id;
                     break;
@@ -176,6 +175,7 @@
                 employeeModel.Address.Id = employeeModel.AddressId.Value;
             }
             
+            //Telling the EF that 2 of the entities are modified and to save the changes
             context.Entry(employeeModel).State = EntityState.Modified;
             context.Entry(employeeModel.Address).State = EntityState.Modified;
             
@@ -248,7 +248,6 @@
 
             if (teamMember.Teams.Count != 0)
             {
-                //var team = context.Teams.Find(teamMember.TeamId);
                 var teams = teamMember.Teams.ToList();
 
                 teamView.Name = teams[0].Name;
@@ -275,6 +274,7 @@
                         break;
                 }
 
+                //Change this to make it generic for more then one team
                 if (teamView.TeamLeader.Manager != null)
                 {
                     teamView.ProjectManager = teamView.TeamLeader.Manager;
@@ -294,7 +294,7 @@
         }
 
         /// <summary>
-        /// Fill the ViewBags with Managers("ManagerId"), team to be member("AsMemberTeamId") and teams to be leader("AsLeaderTeamId")
+        /// Fill the ViewBags with Managers("ManagerId")
         /// </summary>
         private void fillTheViewBags()
         {
@@ -304,7 +304,7 @@
         }
 
         /// <summary>
-        /// Fill the ViewBags with Managers("ManagerId"), team to be member("AsMemberTeamId") and teams to be leader("AsLeaderTeamId") and selected indexes
+        /// Fill the ViewBags with Managers("ManagerId")
         /// </summary>
         /// 
         private void fillTheViewBags(Employee employee)

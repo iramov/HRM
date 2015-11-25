@@ -349,15 +349,24 @@
                                                             (e.Teams.Count == 0 && e.Position == Position.TeamLeader))
                                                             .OrderBy(e => e.Position)
                                                             .ToList();
-            /*Taking employees who are: 1) with position higher then TL
+            /*Taking employees who are: 1) with position higher or equal to TL
              *                          2) Position less or equal to TL and got no team
-             *                          3) and the team leader - because we might want to change the leader and put him as a member of the team
              */
-            var freeEmployees = context.Employees.Where(e => e.Position > Position.TeamLeader ||
-                                                            (e.Teams.Count == 0 && e.Position <= Position.TeamLeader))
+            var freeEmployees = context.Employees.Where(e => e.Position >= Position.TeamLeader ||
+                                                            (e.Teams.Count == 0 && e.Position < Position.TeamLeader))
                                                             .OrderBy(e => e.Position)
                                                             .ToList();
 
+            //Taking from the list above all the TL who are not leader to this team and checking if they are leaders in other team
+            //because a TL can be Leader in only 1 team
+            var leaders = freeLeaders.Where(l => l.Position == Position.TeamLeader).ToList();
+            foreach (var leader in leaders)
+            {
+                if (context.Teams.Any(e => e.LeaderId == leader.Id))
+                {
+                    freeLeaders.Remove(leader);
+                }
+            }
 
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNamePositionAndEmail");
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name");
@@ -377,13 +386,13 @@
                                                             .ToList();
             /*Taking employees who are: 1) with position higher then TL
              *                          2) Position less or equal to TL and got no team
-             *                          3) and the team leader - because we might want to change the leader and put him as a member of the team
              */
-            var freeEmployees = context.Employees.Where(e => e.Position > Position.TeamLeader ||
-                                                            (e.Teams.Count == 0 && e.Position <= Position.TeamLeader) ||
-                                                            (e.Id == teamView.LeaderId))
+            var freeEmployees = context.Employees.Where(e => e.Position >= Position.TeamLeader ||
+                                                            (e.Teams.Count == 0 && e.Position < Position.TeamLeader))
                                                             .OrderBy(e => e.Position)
                                                             .ToList();
+                                                            //(e.Id == teamView.LeaderId))
+                                                            
             //Taking from the list above all the TL who are not leader to this team and checking if they are leaders in other team
             //because a TL can be Leader in only 1 team
             var leaders = freeLeaders.Where(l => l.Position == Position.TeamLeader && l.Id != teamView.LeaderId).ToList();
@@ -397,7 +406,7 @@
 
             ViewBag.LeaderId = new SelectList(freeLeaders, "Id", "FullNamePositionAndEmail", teamView.LeaderId);
             ViewBag.ProjectId = new SelectList(context.Projects, "Id", "Name", teamView.ProjectId);
-            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNamePositionAndEmail"); //, teamView.Members.Select(m => m.Id)
+            ViewBag.FreeEmployees = new SelectList(freeEmployees, "Id", "FullNamePositionAndEmail");
         }
 
         protected override void Dispose(bool disposing)
