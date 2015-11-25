@@ -326,7 +326,10 @@
             {
                 foreach (var member in teamEditted.Members)
                 {
-                    member.Teams.Remove(teamEditted);
+                    if (member.Id != teamEditted.LeaderId)
+                    {
+                        member.Teams.Remove(teamEditted);
+                    }
                 }
             }
 

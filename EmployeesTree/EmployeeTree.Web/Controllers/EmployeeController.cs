@@ -162,7 +162,7 @@
                 var manager = context.Employees.Find(employeeModel.ManagerId);
                 if (employeeModel.Position > manager.Position)
                 {
-                    ModelState.AddModelError("", "The employee cannot have manager wiht lower position then his");
+                    ModelState.AddModelError("", "The employee cannot have manager with lower position then his");
                 }
 
             }
