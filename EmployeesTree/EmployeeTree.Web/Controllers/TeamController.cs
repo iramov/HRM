@@ -295,9 +295,9 @@
                 {
                     foreach (var memberToRemove in listWithMembersToRemove)
                     {
+                        //Finding the employee from the context and checking if he is the leader of team
+                        //after that deleting if he is not cos the leader of team is still member of the team
                         var employeeToDelete = context.Employees.Find(memberToRemove.Id);
-                        //memberToRemove.TeamId = null;
-                        //employeeToDelete.ManagerId = null;
                         if (employeeToDelete.Id != teamEditted.LeaderId)
                         {
                             teamEditted.Members.Remove(employeeToDelete);
@@ -311,13 +311,14 @@
                 {
                     foreach (var memberToAdd in subractNewFromOldMemebers)
                     {
+                        //Finding the member to add from the context and checking his ManagerId and
+                        //if its null we are assigning him to the current team Leader as Manager and changing his delivery to the team ones
                         var employeeToAdd = context.Employees.Find(memberToAdd.Id);
                         if (employeeToAdd.ManagerId == null)
                         {
                             employeeToAdd.ManagerId = teamEditted.LeaderId;
                         }
                         employeeToAdd.Delivery = teamEditted.Delivery;
-                        //employeeToAdd.TeamId = teamModel.Id;
                         teamEditted.Members.Add(employeeToAdd);
                     }
                 }
@@ -342,10 +343,16 @@
         /// </summary>
         private void fillTheViewBags()
         {
+            /*Taking all the free leaders who are: 1) with position equal or higher then TL
+                                                   2) TLs without team     */
             var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader ||
                                                             (e.Teams.Count == 0 && e.Position == Position.TeamLeader))
                                                             .OrderBy(e => e.Position)
                                                             .ToList();
+            /*Taking employees who are: 1) with position higher then TL
+             *                          2) Position less or equal to TL and got no team
+             *                          3) and the team leader - because we might want to change the leader and put him as a member of the team
+             */
             var freeEmployees = context.Employees.Where(e => e.Position > Position.TeamLeader ||
                                                             (e.Teams.Count == 0 && e.Position <= Position.TeamLeader))
                                                             .OrderBy(e => e.Position)
@@ -362,15 +369,23 @@
         /// </summary>
         private void fillTheViewBagsWithSelected(TeamWithEmployeesViewModel teamView)
         {
+            /*Taking all the free leaders who are: 1) with position equal or higher then TL
+                                                   2) TLs without team     */
             var freeLeaders = context.Employees.Where(e => e.Position >= Position.TeamLeader ||
                                                             (e.Teams.Count == 0 && e.Position == Position.TeamLeader))
                                                             .OrderBy(e => e.Position)
                                                             .ToList();
+            /*Taking employees who are: 1) with position higher then TL
+             *                          2) Position less or equal to TL and got no team
+             *                          3) and the team leader - because we might want to change the leader and put him as a member of the team
+             */
             var freeEmployees = context.Employees.Where(e => e.Position > Position.TeamLeader ||
                                                             (e.Teams.Count == 0 && e.Position <= Position.TeamLeader) ||
                                                             (e.Id == teamView.LeaderId))
                                                             .OrderBy(e => e.Position)
                                                             .ToList();
+            //Taking from the list above all the TL who are not leader to this team and checking if they are leaders in other team
+            //because a TL can be Leader in only 1 team
             var leaders = freeLeaders.Where(l => l.Position == Position.TeamLeader && l.Id != teamView.LeaderId).ToList();
             foreach (var leader in leaders)
             {
