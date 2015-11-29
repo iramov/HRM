@@ -55,7 +55,7 @@
             <tr id="template-row">
                 <td class="col-md-10">
                     @Html.Label("Choose team member: ", new { @class = "control-label col-md-2" })
-                    @Html.DropDownList("Members[index].Id", (SelectList)ViewBag.FreeEmployees, new { @class = "form-control" })
+                    @Html.DropDownList("Members[index].Id", (SelectList)ViewBag.FreeEmployees, new { data_container = "teams", @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Members, "", new { @class = "text-danger" })
                 </td>
                 <td id="td-delete-employee">
@@ -83,12 +83,5 @@
 {
     @Scripts.Render("~/bundles/jqueryval")
     <script src="~/Scripts/team.add-remove.employees.js"></script>
-    <script>
-        $("#beginForm").on("submit", function () {
-            $("[data-container]").each(function (index, value) {
-
-                $(this).attr("name", "Members[" + index + "].Id");
-            });
-        })
-    </script>
+    <script src="~/Scripts/createTeam.onSubmit.js"></script>
 }

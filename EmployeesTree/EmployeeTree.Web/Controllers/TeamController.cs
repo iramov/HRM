@@ -109,7 +109,7 @@
         // GET: Team/Create
         public ActionResult Create()
         {
-            fillTheViewBags();
+            FillTheViewBags();
             return View();
         }
 
@@ -164,7 +164,7 @@
 
             if (!ModelState.IsValid)
             {
-                fillTheViewBags();
+                FillTheViewBags();
                 return View(teamModel);
             }
 
@@ -211,7 +211,7 @@
             teamView.ProjectId = teamEdit.ProjectId;
             teamView.Delivery = teamEdit.Delivery;
 
-            fillTheViewBagsWithSelected(teamView);
+            FillTheViewBagsWithSelected(teamView);
             return View(teamView);
         }
 
@@ -266,7 +266,7 @@
             if (!ModelState.IsValid)
             {
                 teamModel.Members = teamEditted.Members.ToList();
-                fillTheViewBagsWithSelected(teamModel);
+                FillTheViewBagsWithSelected(teamModel);
                 return View(teamModel);
             }
 
@@ -341,7 +341,7 @@
         /// <summary>
         /// Fill the ViewBags with Leaders("LeadersId"), Projects("ProjectsId") and Employees("FreeEmployees")
         /// </summary>
-        private void fillTheViewBags()
+        private void FillTheViewBags()
         {
             /*Taking all the free leaders who are: 1) with position equal or higher then TL
                                                    2) TLs without team     */
@@ -376,7 +376,7 @@
         /// <summary>
         /// Fill the ViewBags with Leaders("LeadersId"), Projects("ProjectsId") and Employees("FreeEmployees") and giving them selected values
         /// </summary>
-        private void fillTheViewBagsWithSelected(TeamWithEmployeesViewModel teamView)
+        private void FillTheViewBagsWithSelected(TeamWithEmployeesViewModel teamView)
         {
             /*Taking all the free leaders who are: 1) with position equal or higher then TL
                                                    2) TLs without team     */
